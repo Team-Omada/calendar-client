@@ -25,8 +25,8 @@
       <v-btn to="/" text class="mr-2">
         <span>Login</span>
       </v-btn>
-      <v-btn to="/about" text>
-        <span>About</span>
+      <v-btn to="/register" text>
+        <span>Register</span>
       </v-btn>
     </v-app-bar>
 
