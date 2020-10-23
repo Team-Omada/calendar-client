@@ -23,7 +23,7 @@
 
       <v-spacer></v-spacer>
       <v-btn to="/" text class="mr-2">
-        <span>Home</span>
+        <span>Login</span>
       </v-btn>
       <v-btn to="/about" text>
         <span>About</span>
@@ -31,7 +31,7 @@
     </v-app-bar>
 
     <v-main>
-      <v-container>
+      <v-container fluid>
         <router-view></router-view>
       </v-container>
     </v-main>
@@ -41,9 +41,8 @@
 <script>
 export default {
   name: "App",
-
-  data: () => ({
-    //
-  })
+  // data() {
+  //   return ;
+  // },
 };
 </script>
