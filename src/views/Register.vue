@@ -65,6 +65,8 @@
 </template>
 
 <script>
+// TODO: Use :error-messages option on text-fields when we make API requests
+// The current implementation doesn't allow for us to modify error message from server error
 export default {
   name: "Register",
   data() {

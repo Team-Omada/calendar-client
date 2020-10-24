@@ -13,8 +13,9 @@
       <v-form v-model="isValid">
         <v-text-field
           label="Email"
-          prepend-icon="mdi-account-circle"
+          prepend-icon="mdi-email"
           v-model="email"
+          autocomplete="email"
           clearable
           :rules="[(v) => !!v || 'Please enter your email.']"
         ></v-text-field>
@@ -22,6 +23,7 @@
           label="Password"
           v-model="password"
           prepend-icon="mdi-lock"
+          autocomplete="current-password"
           :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
           :type="passwordShow ? 'text' : 'password'"
           :rules="[(v) => !!v || 'Please enter your password.']"
@@ -29,13 +31,16 @@
         ></v-text-field>
       </v-form>
       <v-card-actions>
-        <v-btn text color="primary">Register</v-btn>
+        <v-btn text x-small>Forgot password?</v-btn>
         <v-spacer />
         <v-btn color="primary" :disabled="!isValid" @click="login">Login</v-btn>
       </v-card-actions>
       <v-divider />
-      <div class="d-flex justify-center mt-2">
-        <v-btn text small>Forgot password?</v-btn>
+      <div class="d-flex justify-center align-center mt-2">
+        Need an account?
+        <v-btn text small color="primary" class="ml-1" to="/register">
+          Register
+        </v-btn>
       </div>
     </v-card-text>
   </v-card>
