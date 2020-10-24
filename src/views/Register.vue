@@ -25,7 +25,9 @@
           v-model="username"
           autocomplete="username"
           clearable
-          :rules="[rules.required]"
+          maxlength="20"
+          counter
+          :rules="[rules.required, rules.username]"
         ></v-text-field>
         <v-text-field
           label="Password"
@@ -34,7 +36,7 @@
           autocomplete="new-password"
           :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
           :type="passwordShow ? 'text' : 'password'"
-          :rules="[rules.required]"
+          :rules="[rules.required, rules.password]"
           @click:append="passwordShow = !passwordShow"
         ></v-text-field>
         <v-text-field
@@ -81,9 +83,18 @@ export default {
       loading: false,
       rules: {
         required: (value) => !!value || "Field is required.",
+        password: (value) =>
+          value.length > 8 || "Must be greater than 8 characters.",
         email: (value) => {
           const pattern = /^[A-Za-z]{2,5}[\d]{3}@cougars\.csusm\.edu$|^[A-Za-z]{2,}@csusm\.edu$/;
           return pattern.test(value) || "Must be a CSUSM student email.";
+        },
+        username: (value) => {
+          const pattern = /^[\w]{3,20}$/;
+          return (
+            pattern.test(value) ||
+            "Must contain only letters, digits, or underscore."
+          );
         },
       },
     };
