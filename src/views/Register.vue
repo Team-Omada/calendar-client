@@ -51,7 +51,7 @@
         ></v-text-field>
       </v-form>
       <v-card-actions class="justify-center">
-        <v-btn color="primary" :disabled="!isValid" @click="register">
+        <v-btn color="primary" :disabled="!isValid" @click="onRegisterBtn">
           Register
         </v-btn>
       </v-card-actions>
@@ -69,6 +69,7 @@
 <script>
 // TODO: Use :error-messages option on text-fields when we make API requests
 // The current implementation doesn't allow for us to modify error message from server error
+import { register } from "../API";
 export default {
   name: "Register",
   data() {
@@ -84,7 +85,7 @@ export default {
       rules: {
         required: (value) => !!value || "Field is required.",
         password: (value) =>
-          value.length > 8 || "Must be greater than 8 characters.",
+          (!!value && value.length > 8) || "Must be greater than 8 characters.",
         email: (value) => {
           const pattern = /^[A-Za-z]{2,5}[\d]{3}@cougars\.csusm\.edu$|^[A-Za-z]{2,}@csusm\.edu$/;
           return pattern.test(value) || "Must be a CSUSM student email.";
@@ -102,9 +103,15 @@ export default {
   methods: {
     // will turn into async function when we implement backend
     // loading will take place as it connects to database
-    register() {
+    async onRegisterBtn() {
       this.loading = true;
-      setTimeout(() => (this.loading = false), 2000);
+      const res = await register({
+        email: this.email,
+        password: this.password,
+        username: this.username,
+      });
+      console.log(res.data);
+      this.loading = false;
     },
   },
   computed: {
