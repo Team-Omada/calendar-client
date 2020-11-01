@@ -22,7 +22,7 @@
       </div>
 
       <v-spacer></v-spacer>
-      <v-btn to="/" text class="mr-2">
+      <v-btn to="/login" text class="mr-2">
         <span>Login</span>
       </v-btn>
       <v-btn to="/register" text>

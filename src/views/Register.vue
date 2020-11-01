@@ -5,7 +5,6 @@
     rounded="rounded-lg"
     elevation="2"
     :loading="loading"
-    transition="scroll-x-transition"
   >
     <v-card-title>
       Register
@@ -18,6 +17,7 @@
           v-model="email"
           clearable
           :rules="[rules.required, rules.email]"
+          :error-messages="serverErrors.emailError"
         ></v-text-field>
         <v-text-field
           label="Username"
@@ -28,6 +28,7 @@
           maxlength="20"
           counter
           :rules="[rules.required, rules.username]"
+          :error-messages="serverErrors.nameError"
         ></v-text-field>
         <v-text-field
           label="Password"
@@ -37,6 +38,7 @@
           :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
           :type="passwordShow ? 'text' : 'password'"
           :rules="[rules.required, rules.password]"
+          :error-messages="serverErrors.passwordError"
           @click:append="passwordShow = !passwordShow"
         ></v-text-field>
         <v-text-field
@@ -51,7 +53,11 @@
         ></v-text-field>
       </v-form>
       <v-card-actions class="justify-center">
-        <v-btn color="primary" :disabled="!isValid" @click="onRegisterBtn">
+        <v-btn
+          color="primary"
+          :disabled="!isValid || submitted"
+          @click="onRegisterBtn"
+        >
           Register
         </v-btn>
       </v-card-actions>
@@ -67,8 +73,6 @@
 </template>
 
 <script>
-// TODO: Use :error-messages option on text-fields when we make API requests
-// The current implementation doesn't allow for us to modify error message from server error
 import { register } from "../API";
 export default {
   name: "Register",
@@ -82,6 +86,17 @@ export default {
       passwordShow: false,
       confirmShow: false,
       loading: false,
+      submitted: false,
+
+      // :error-messages prop on text fields is now used with serverErrors data
+      // these errors display info after server side validation
+      serverErrors: {
+        passwordError: "",
+        emailError: "",
+        nameError: "",
+      },
+
+      // client side rules for validation only runs for client
       rules: {
         required: (value) => !!value || "Field is required.",
         password: (value) =>
@@ -101,21 +116,71 @@ export default {
     };
   },
   methods: {
-    // will turn into async function when we implement backend
-    // loading will take place as it connects to database
+    /**
+     * On clicking of registration button do this:
+     *  (1) submit credentials to server, disable submit button and enable loading
+     *  (2) catch any validation errors using the response's info field
+     *  (3) store credentials/token and navigate to home
+     */
     async onRegisterBtn() {
       this.loading = true;
-      const res = await register({
-        email: this.email,
-        password: this.password,
-        username: this.username,
-      });
-      console.log(res.data);
-      this.loading = false;
+      this.submitted = true;
+      try {
+        const res = await register({
+          email: this.email,
+          password: this.password,
+          username: this.username,
+        });
+        this.$store.dispatch("setUser", res.data.user);
+        this.$store.dispatch("setToken", res.data.token);
+        this.$router.push({ path: "dashboard" });
+        this.loading = false;
+        this.submitted = false;
+        console.log(res);
+      } catch (err) {
+        if (err.response) {
+          // any non-200 responses are handled using server's error class "info" and "message" fields
+          // any 500 responses from server will be displayed under email field
+          const errMessage = err.response.data.message;
+          switch (err.response.data.info) {
+            case "emailError":
+              this.serverErrors.emailError = errMessage;
+              break;
+            case "nameError":
+              this.serverErrors.nameError = errMessage;
+              break;
+            case "passwordError":
+              this.serverErrors.passwordError = errMessage;
+              break;
+            default:
+              this.serverErrors.emailError = errMessage;
+          }
+        } else if (err.request) {
+          this.serverErrors.emailError = "The request couldn't be sent.";
+          console.log("Request couldn't be sent: ", err);
+        } else {
+          this.serverErrors.emailError = "Something went wrong...";
+          console.log("Something happened when setting up request: ", err);
+        }
+        this.loading = false;
+        this.submitted = false;
+      }
+    },
+  },
+  // clear any server validation errors once user starts typing in that field
+  watch: {
+    email() {
+      this.serverErrors.emailError = "";
+    },
+    username() {
+      this.serverErrors.nameError = "";
+    },
+    password() {
+      this.serverErrors.passwordError = "";
     },
   },
   computed: {
-    // function needs to run on a this.password change as well
+    // should run whenever either this.password or this.confirmPassword changes
     passwordMatch() {
       return (
         this.password === this.confirmPassword || "Passwords do not match."
@@ -124,5 +189,3 @@ export default {
   },
 };
 </script>
-
-<style></style>
