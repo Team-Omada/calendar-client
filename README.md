@@ -1,6 +1,6 @@
 # calendar-client
 
-Our client runs on port 8080, visit localhost:8080 to see the client! It should have 2 basic routes, "Home" and "About".
+Our client runs on port 8080, visit localhost:8080 to see the client! Register and Login should be working. Make sure to start the omada-server to check them out. Logging in or creating an account forces you to a /dashboard page where your only actions are to log out or sit there. Since you are logged in, you cannot visit the /register or /login routes!
 
 ## Project setup
 
