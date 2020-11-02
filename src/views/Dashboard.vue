@@ -1,13 +1,13 @@
 <template>
-  <HelloWorld msg="Hello from the home page!" />
+  <HelloWorld msg="Hello from the dashboard, you are authenticated!" />
 </template>
 
 <script>
 import HelloWorld from "../components/HelloWorld";
 export default {
-  name: "Home",
+  name: "Dashboard",
   components: {
-    HelloWorld
-  }
+    HelloWorld,
+  },
 };
 </script>

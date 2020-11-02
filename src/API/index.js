@@ -1,13 +1,22 @@
 import axios from "axios";
+import store from "../store";
 
-const instance = axios.create({
+// '/' is included at end of base URL, so write API calls accordingly!
+const api = axios.create({
   baseURL: "http://localhost:3000/",
+  headers: {
+    Authorization: `Bearer ${store.state.token}`,
+  },
 });
 
 function register(data) {
-  return instance.post("register", data);
+  return api.post("register", data);
 }
 
-// Future endpoint functions will go here
+function login(data) {
+  return api.post("login", data);
+}
 
-export { instance, register };
+// Other API calls go here
+
+export { api, register, login };
