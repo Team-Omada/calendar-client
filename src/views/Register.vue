@@ -134,9 +134,6 @@ export default {
         this.$store.dispatch("setUser", res.data.user);
         this.$store.dispatch("setToken", res.data.token);
         this.$router.push({ path: "dashboard" });
-        this.loading = false;
-        this.submitted = false;
-        console.log(res);
       } catch (err) {
         if (err.response) {
           // any non-200 responses are handled using server's error class "info" and "message" fields
@@ -162,9 +159,9 @@ export default {
           this.serverErrors.emailError = "Something went wrong...";
           console.log("Something happened when setting up request: ", err);
         }
-        this.loading = false;
-        this.submitted = false;
       }
+      this.loading = false;
+      this.submitted = false;
     },
   },
   // clear any server validation errors once user starts typing in that field

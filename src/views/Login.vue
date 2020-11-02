@@ -18,6 +18,7 @@
           autocomplete="email"
           clearable
           :rules="[(v) => !!v || 'Please enter your email.']"
+          :error-messages="authError"
         ></v-text-field>
         <v-text-field
           label="Password"
@@ -27,13 +28,19 @@
           :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
           :type="passwordShow ? 'text' : 'password'"
           :rules="[(v) => !!v || 'Please enter your password.']"
+          :error-messages="authError"
           @click:append="passwordShow = !passwordShow"
         ></v-text-field>
       </v-form>
       <v-card-actions>
         <v-btn text x-small>Forgot password?</v-btn>
         <v-spacer />
-        <v-btn color="primary" :disabled="!isValid" @click="login">Login</v-btn>
+        <v-btn
+          color="primary"
+          :disabled="!isValid || submitted"
+          @click="onLoginBtn"
+          >Login</v-btn
+        >
       </v-card-actions>
       <v-divider />
       <div class="d-flex justify-center align-center mt-2">
@@ -47,6 +54,7 @@
 </template>
 
 <script>
+import { login } from "../API";
 export default {
   name: "Login",
   data() {
@@ -56,14 +64,50 @@ export default {
       passwordShow: false,
       isValid: false,
       loading: false,
+      submitted: false,
+
+      // :error-messages prop on text fields is now used after server validation
+      // for security, we don't specify which field failed authentication
+      authError: "",
     };
   },
   methods: {
     // will turn into async function when we implement backend
     // loading will take place as it connects to database
-    login() {
+    async onLoginBtn() {
       this.loading = true;
-      setTimeout(() => (this.loading = false), 2000);
+      this.submitted = true;
+      try {
+        const res = await login({
+          email: this.email,
+          password: this.password,
+        });
+        this.$store.dispatch("setUser", res.data.user);
+        this.$store.dispatch("setToken", res.data.token);
+        this.$router.push({ path: "dashboard" });
+      } catch (err) {
+        if (err.response) {
+          // any non-200 responses will be either 401's or 500's
+          // both fields will show this error
+          this.authError = err.response.data.message;
+        } else if (err.request) {
+          this.authError = "The request couldn't be sent.";
+          console.log("Request couldn't be sent: ", err);
+        } else {
+          this.authError = "Something went wrong...";
+          console.log("Something happened when setting up request: ", err);
+        }
+      }
+      this.loading = false;
+      this.submitted = false;
+    },
+  },
+  watch: {
+    email() {
+      this.authError = "";
+    },
+    password() {
+      this.authError = "";
     },
   },
 };

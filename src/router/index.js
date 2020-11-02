@@ -12,11 +12,15 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
+    meta: {
+      disableIfAuth: true,
+    },
   },
   {
     path: "/register",
     name: "Register",
     component: Register,
+    meta: { disableIfAuth: true },
   },
   {
     path: "/dashboard",
@@ -38,13 +42,21 @@ const router = new VueRouter({
 
 /**
  * Check if authentication is required for the route
- * Then redirect to /login if not authenticated, otherwise continue
- * In our case, all routes will be required, but maybe that could change in future!
+ * Then redirect to /login if not authenticated, otherwise:
+ *
+ * Check if route should be disabled when logged in and redirect to /dashboard
+ * A user shouldn't be able to access /login and /register when logged in!
  */
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!store.state.isLoggedIn) {
       next({ name: "Login" });
+    } else {
+      next();
+    }
+  } else if (to.matched.some((record) => record.meta.disableIfAuth)) {
+    if (store.state.isLoggedIn) {
+      next({ name: "Dashboard" });
     } else {
       next();
     }
