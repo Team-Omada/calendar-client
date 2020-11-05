@@ -1,9 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import store from "../store";
+// import store from "../store";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import Dashboard from "../views/Dashboard.vue";
+import CreateSchedule from "../views/CreateSchedule.vue";
 
 Vue.use(VueRouter);
 
@@ -29,6 +30,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/createschedule",
+    name: "CreateSchedule",
+    component: CreateSchedule,
+    meta: { requiresAuth: true },
+  },
+  {
     path: "*",
     redirect: "/dashboard",
   },
@@ -47,22 +54,23 @@ const router = new VueRouter({
  * Check if route should be disabled when logged in and redirect to /dashboard
  * A user shouldn't be able to access /login and /register when logged in!
  */
-router.beforeEach((to, from, next) => {
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (!store.state.isLoggedIn) {
-      next({ name: "Login" });
-    } else {
-      next();
-    }
-  } else if (to.matched.some((record) => record.meta.disableIfAuth)) {
-    if (store.state.isLoggedIn) {
-      next({ name: "Dashboard" });
-    } else {
-      next();
-    }
-  } else {
-    next();
-  }
-});
+// IMPORTANT!!! Uncomment for route protection!!!
+// router.beforeEach((to, from, next) => {
+//   if (to.matched.some((record) => record.meta.requiresAuth)) {
+//     if (!store.state.isLoggedIn) {
+//       next({ name: "Login" });
+//     } else {
+//       next();
+//     }
+//   } else if (to.matched.some((record) => record.meta.disableIfAuth)) {
+//     if (store.state.isLoggedIn) {
+//       next({ name: "Dashboard" });
+//     } else {
+//       next();
+//     }
+//   } else {
+//     next();
+//   }
+// });
 
 export default router;
