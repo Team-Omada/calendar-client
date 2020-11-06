@@ -37,7 +37,8 @@
         <v-spacer />
         <v-btn
           color="primary"
-          :disabled="!isValid || submitted"
+          :disabled="!isValid"
+          :loading="submitted"
           @click="onLoginBtn"
           >Login</v-btn
         >

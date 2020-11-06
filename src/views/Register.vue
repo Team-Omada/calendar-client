@@ -55,7 +55,8 @@
       <v-card-actions class="justify-center">
         <v-btn
           color="primary"
-          :disabled="!isValid || submitted"
+          :disabled="!isValid"
+          :loading="submitted"
           @click="onRegisterBtn"
         >
           Register
