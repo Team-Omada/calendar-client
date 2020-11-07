@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-// import store from "../store";
+import store from "../store";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import Dashboard from "../views/Dashboard.vue";
@@ -55,22 +55,22 @@ const router = new VueRouter({
  * A user shouldn't be able to access /login and /register when logged in!
  */
 // IMPORTANT!!! Uncomment for route protection!!!
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some((record) => record.meta.requiresAuth)) {
-//     if (!store.state.isLoggedIn) {
-//       next({ name: "Login" });
-//     } else {
-//       next();
-//     }
-//   } else if (to.matched.some((record) => record.meta.disableIfAuth)) {
-//     if (store.state.isLoggedIn) {
-//       next({ name: "Dashboard" });
-//     } else {
-//       next();
-//     }
-//   } else {
-//     next();
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!store.state.isLoggedIn) {
+      next({ name: "Login" });
+    } else {
+      next();
+    }
+  } else if (to.matched.some((record) => record.meta.disableIfAuth)) {
+    if (store.state.isLoggedIn) {
+      next({ name: "Dashboard" });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
 
 export default router;

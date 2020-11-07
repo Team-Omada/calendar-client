@@ -17,6 +17,10 @@ function login(data) {
   return api.post("login", data);
 }
 
+function postSchedule(scheduleObj) {
+  return api.post("schedules", scheduleObj);
+}
+
 // Other API calls go here
 
-export { api, register, login };
+export { api, register, login, postSchedule };
