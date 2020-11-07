@@ -54,11 +54,11 @@
             <div class="d-flex flex-wrap">
               <v-checkbox
                 class="mr-6"
-                v-for="day in days"
-                :key="day.label"
-                :label="day.label"
-                v-model="course.selectedDays"
-                :value="day.value"
+                v-for="checkbox in checkboxes"
+                :key="checkbox.label"
+                :label="checkbox.label"
+                v-model="course.days"
+                :value="checkbox.value"
                 multiple
                 dense
                 :error="dayError"
@@ -89,7 +89,7 @@ export default {
       isValid: false,
       dayError: false,
       timeError: "",
-      days: [
+      checkboxes: [
         { label: "Mon", value: "monday" },
         { label: "Tue", value: "tuesday" },
         { label: "Wed", value: "wednesday" },
@@ -102,7 +102,7 @@ export default {
         courseID: null,
         courseName: null,
         instructor: null,
-        selectedDays: [],
+        days: [],
         startTime: null,
         endTime: null,
       },
@@ -118,15 +118,15 @@ export default {
   },
   methods: {
     onAddBtn() {
-      if (this.course.selectedDays.length === 0) {
+      if (this.course.days.length === 0) {
         this.dayError = true;
       } else {
         const courseToAdd = { ...this.course };
         this.$emit("add-course", courseToAdd);
         // empty out this.courses object for next course
         for (let key in this.course) {
-          if (key === "selectedDays") {
-            this.course.selectedDays = [];
+          if (key === "days") {
+            this.course.days = [];
           } else {
             this.course[key] = null;
           }

@@ -117,7 +117,7 @@ export default {
        * Uses assocDays to map list of days to associated day in week of this.value
        */
       unformatted.forEach((course) => {
-        course.selectedDays.forEach((day) => {
+        course.days.forEach((day) => {
           const formattedDay = day.toLowerCase();
           const start = `2020-11-0${this.assocDays[formattedDay]} ${course.startTime}`;
           const end = `2020-11-0${this.assocDays[formattedDay]} ${course.endTime}`;
