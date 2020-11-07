@@ -56,7 +56,7 @@
         <v-btn
           color="primary"
           :disabled="!isValid"
-          :loading="submitted"
+          :loading="loading"
           @click="onRegisterBtn"
         >
           Register
@@ -87,7 +87,6 @@ export default {
       passwordShow: false,
       confirmShow: false,
       loading: false,
-      submitted: false,
 
       // :error-messages prop on text fields is now used with serverErrors data
       // these errors display info after server side validation
@@ -125,7 +124,6 @@ export default {
      */
     async onRegisterBtn() {
       this.loading = true;
-      this.submitted = true;
       try {
         const res = await register({
           email: this.email,
@@ -162,7 +160,6 @@ export default {
         }
       }
       this.loading = false;
-      this.submitted = false;
     },
   },
   // clear any server validation errors once user starts typing in that field

@@ -38,7 +38,7 @@
         <v-btn
           color="primary"
           :disabled="!isValid"
-          :loading="submitted"
+          :loading="loading"
           @click="onLoginBtn"
           >Login</v-btn
         >
@@ -65,7 +65,6 @@ export default {
       passwordShow: false,
       isValid: false,
       loading: false,
-      submitted: false,
 
       // :error-messages prop on text fields is now used after server validation
       // for security, we don't specify which field failed authentication
@@ -77,7 +76,6 @@ export default {
     // loading will take place as it connects to database
     async onLoginBtn() {
       this.loading = true;
-      this.submitted = true;
       try {
         const res = await login({
           email: this.email,
@@ -100,7 +98,6 @@ export default {
         }
       }
       this.loading = false;
-      this.submitted = false;
     },
   },
   watch: {
