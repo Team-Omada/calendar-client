@@ -12,7 +12,7 @@
               hint="ex. CS441"
               v-model="course.courseID"
               hide-details="auto"
-              :rules="[rules.required, rules.course]"
+              :rules="[rules.required, rules.course, uniqueCourse]"
             >
             </v-text-field>
           </v-col>
@@ -81,6 +81,9 @@
 import TimePicker from "../components/TimePicker";
 export default {
   name: "AddCourse",
+  props: {
+    courses: Array,
+  },
   components: {
     TimePicker,
   },
@@ -152,6 +155,16 @@ export default {
       } else {
         this.timeError = "";
       }
+    },
+  },
+  computed: {
+    // checks all names of added courses to determine if current has already been added
+    uniqueCourse() {
+      const currentCourseID = this.course.courseID;
+      return (
+        this.courses.every((course) => currentCourseID !== course.courseID) ||
+        "You've already added this course!"
+      );
     },
   },
 };

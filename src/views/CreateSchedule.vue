@@ -1,13 +1,12 @@
 <template>
   <div>
     <Calendar
-      :courses="schedule.courses"
-      :semesterInfo="schedule.semesterInfo"
+      :schedule="schedule"
       editable
       @title-change="(value) => (schedule.title = value)"
       @semester-change="(value) => (schedule.semesterInfo = value)"
     />
-    <AddCourse @add-course="pushCourse" />
+    <AddCourse @add-course="pushCourse" :courses="schedule.courses" />
     <div class="d-flex justify-center mt-4">
       <v-btn
         :loading="loading"
@@ -18,10 +17,10 @@
         Publish!
       </v-btn>
     </div>
-    <v-snackbar v-model="successOnAdd" timeout="2000" color="success">
-      Course was added to your schedule!
+    <v-snackbar v-model="showSnackbar" timeout="2000" :color="snackBarColor">
+      {{ snackBarMsg }}
       <template v-slot:action="{ attrs }">
-        <v-btn text v-bind="attrs" @click="successOnAdd = false">
+        <v-btn text v-bind="attrs" @click="showSnackbar = false">
           Close
         </v-btn>
       </template>
@@ -32,6 +31,7 @@
 <script>
 import Calendar from "../components/Calendar";
 import AddCourse from "../components/AddCourse";
+import { postSchedule } from "../API";
 export default {
   name: "CreateSchedule",
   components: {
@@ -40,15 +40,15 @@ export default {
   },
   data() {
     return {
-      successOnAdd: false,
+      showSnackbar: false,
+      snackBarMsg: "",
+      snackBarColor: "",
       validSchedule: false,
       loading: false,
       schedule: {
-        title: null,
-        semesterInfo: {
-          name: null,
-          year: new Date().getFullYear(),
-        },
+        scheduleTitle: "",
+        semester: "",
+        semesterYear: new Date().getFullYear(),
         courses: [],
       },
     };
@@ -56,22 +56,39 @@ export default {
   methods: {
     pushCourse(value) {
       this.schedule.courses.push(value);
-      this.successOnAdd = true;
+      this.showSnackbar = true;
+      this.snackBarMsg = "Course was added to your schedule!";
+      this.snackBarColor = "success";
     },
-    onPublishBtn() {
+    async onPublishBtn() {
       this.loading = true;
-      setTimeout(() => {
-        console.log("Submitted schedule!");
-        console.log(this.schedule);
-        this.loading = false;
-      }, 2000);
+      try {
+        const res = await postSchedule(this.schedule);
+        const scheduleID = res.data.scheduleID;
+        this.$router.push({ path: `viewschedule/${scheduleID}` });
+      } catch (err) {
+        this.snackBarColor = "error";
+        this.showSnackbar = true;
+        if (err.response) {
+          // any non-200 responses will be either 401's or 500's
+          // both fields will show this error
+          this.snackBarMsg = err.response.data.message;
+        } else if (err.request) {
+          this.snackBarMsg = "Request couldn't be sent.";
+          console.log(this.snackBarMsg, err);
+        } else {
+          this.snackBarMsg = "Something happened setting up request.";
+          console.log(this.snackBarMsg, err);
+        }
+      }
+      this.loading = false;
     },
   },
   computed: {
     scheduleChange() {
       return (
-        this.schedule.title &&
-        this.schedule.semesterInfo.name &&
+        this.schedule.scheduleTitle &&
+        this.schedule.semester &&
         this.schedule.courses.length !== 0
       );
     },

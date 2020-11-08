@@ -5,6 +5,7 @@ import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import Dashboard from "../views/Dashboard.vue";
 import CreateSchedule from "../views/CreateSchedule.vue";
+import ViewSchedule from "../views/ViewSchedule.vue";
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,12 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/viewschedule/:scheduleID",
+    name: "ViewSchedule",
+    component: ViewSchedule,
     meta: { requiresAuth: true },
   },
   {

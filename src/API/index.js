@@ -21,6 +21,10 @@ function postSchedule(scheduleObj) {
   return api.post("schedules", scheduleObj);
 }
 
+function getScheduleById(scheduleID) {
+  return api.get(`schedules/${scheduleID}`);
+}
+
 // Other API calls go here
 
-export { api, register, login, postSchedule };
+export { api, register, login, postSchedule, getScheduleById };

@@ -4,11 +4,11 @@
     <v-container v-if="!editable" fluid class="px-4 pb-0 pt-3">
       <v-row>
         <v-col cols="12" sm="9">
-          <div class="text-h5">{{ currentTitle }}</div>
+          <div class="text-h5">{{ localSchedule.scheduleTitle }}</div>
         </v-col>
         <v-col cols="12" sm="3" class="d-flex justify-end align-center">
           <div class="text-button text--secondary">
-            {{ semesterInfo.name + " | " + semesterInfo.year }}
+            {{ localSchedule.semester + " | " + localSchedule.semesterYear }}
           </div>
         </v-col>
       </v-row>
@@ -17,7 +17,7 @@
       <v-row>
         <v-col cols="12" sm="9" class="py-0">
           <v-text-field
-            v-model="scheduleTitle"
+            v-model="localSchedule.scheduleTitle"
             label="Schedule Title"
             :rules="[(v) => !!v || 'Field is required.']"
             @input="onTitleChange"
@@ -25,13 +25,13 @@
         </v-col>
         <v-col cols="12" sm="3" class="d-flex justify-end align-center py-0">
           <v-select
-            v-model="selectedSemester.name"
+            v-model="localSchedule.semester"
             :items="items"
             label="Term"
             :rules="[(v) => !!v || 'Item is required']"
             @change="onSemesterChange"
           ></v-select>
-          <div class="ml-6 text-button">{{ selectedSemester.year }}</div>
+          <div class="ml-6 text-button">{{ localSchedule.semesterYear }}</div>
         </v-col>
       </v-row>
     </v-container>
@@ -53,18 +53,20 @@
 export default {
   name: "Calendar",
   props: {
-    currentTitle: String,
-    semesterInfo: Object,
-    editable: Boolean,
-    courses: {
-      type: Array,
-      default: () => [],
+    schedule: {
+      type: Object,
+      default: () => ({
+        scheduleTitle: "",
+        semester: "",
+        semesterYear: "",
+        courses: [],
+      }),
     },
+    editable: Boolean,
   },
   data() {
     return {
-      scheduleTitle: this.currentTitle,
-      selectedSemester: this.semesterInfo,
+      localSchedule: this.schedule,
       value: "2020-11-04", // this is very bad, but it just so happens this week has Sun = 1 and Sat = 7
       // all events will be visualized on this week only
       items: ["Fall", "Spring", "Summer", "Winter"],
@@ -92,7 +94,7 @@ export default {
        *  Summer: April, meaning any selections of "Summer" will be for the current year
        *  It could be possible to late enroll for Spring while in January
        */
-      const name = this.selectedSemester.name;
+      const name = this.localSchedule.semester;
       const currDate = new Date();
       if (
         name === "Fall" ||
@@ -100,23 +102,22 @@ export default {
         name === "Summer" ||
         (name === "Spring" && currDate.getMonth() === 0)
       ) {
-        this.selectedSemester.year = currDate.getFullYear();
+        this.localSchedule.semesterYear = currDate.getFullYear();
       } else {
-        this.selectedSemester.year = currDate.getFullYear() + 1;
+        this.localSchedule.semesterYear = currDate.getFullYear() + 1;
       }
-      this.$emit("semester-change", this.selectedSemester);
+      this.$emit("semester-change", this.localSchedule.semester);
     },
   },
   computed: {
     parseCourses() {
-      const unformatted = this.courses;
       const formatted = [];
       /**
        * Formats according to Vuetify calendar event standards
        * Needs at least name, start, and end in the object
        * Uses assocDays to map list of days to associated day in week of this.value
        */
-      unformatted.forEach((course) => {
+      this.schedule.courses.forEach((course) => {
         course.days.forEach((day) => {
           const formattedDay = day.toLowerCase();
           const start = `2020-11-0${this.assocDays[formattedDay]} ${course.startTime}`;
