@@ -31,7 +31,7 @@
       Dashboard
     </v-btn>
     <v-btn v-if="isLoggedIn" to="/createschedule" text class="mr-2">
-      Create <v-icon right>mdi-plus</v-icon>
+      Create <v-icon right>mdi-calendar-plus</v-icon>
     </v-btn>
     <v-tooltip bottom v-if="isLoggedIn">
       <template v-slot:activator="{ on, attrs }">

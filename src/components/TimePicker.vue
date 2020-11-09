@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog ref="dialog" v-model="open" persistent width="290px">
+    <v-dialog ref="dialog" v-model="open" width="290px">
       <template v-slot:activator="{ on, attrs }">
         <v-text-field
           v-model="time"
@@ -8,8 +8,8 @@
           readonly
           v-bind="attrs"
           v-on="on"
-          :rules="[(v) => !!v || 'Please select a time.']"
-          :error-messages="timeCheckError"
+          :rules="[(v) => !!v || 'Select a time.']"
+          :error-messages="errorMsg"
           dense
           outlined
           prepend-inner-icon="mdi-clock-time-four-outline"
@@ -40,11 +40,16 @@ export default {
   props: {
     placeholderTitle: String,
     error: String,
+    existingTime: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
-      time: null,
+      time: "",
       open: false,
+      errorMsg: "",
     };
   },
   methods: {
@@ -55,9 +60,13 @@ export default {
       this.$emit("time-select", this.time);
     },
   },
-  computed: {
-    timeCheckError() {
-      return this.error;
+  // if there is an existing time (edit course), display it instead of nothing
+  watch: {
+    existingTime() {
+      this.time = this.existingTime;
+    },
+    error() {
+      this.errorMsg = this.error;
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mt-4" elevation="0" outlined rounded="rounded-lg">
+  <v-card elevation="0" outlined rounded="rounded-lg">
     <v-card-title>Add Course</v-card-title>
     <v-card-text class="pb-0">
       <v-form v-model="isValid" ref="form">
@@ -38,6 +38,7 @@
             <TimePicker
               placeholderTitle="Start"
               :error="timeError"
+              :existing-time="course.startTime"
               @time-select="setStartTime"
             />
           </v-col>
@@ -45,44 +46,62 @@
             <TimePicker
               placeholderTitle="End"
               :error="timeError"
+              :existing-time="course.endTime"
               @time-select="setEndTime"
             />
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="12" sm="9">
-            <div class="d-flex flex-wrap">
-              <v-checkbox
-                class="mr-6"
-                v-for="checkbox in checkboxes"
-                :key="checkbox.label"
-                :label="checkbox.label"
-                v-model="course.days"
-                :value="checkbox.value"
-                multiple
-                dense
-                :error="dayError"
-                @click="dayError = false"
-              ></v-checkbox>
-            </div>
-          </v-col>
-          <v-col cols="12" sm="3" class="d-flex justify-end align-center">
-            <v-btn :disabled="!isValid" color="success" @click="onAddBtn">
-              Add<v-icon right>mdi-plus</v-icon>
-            </v-btn>
-          </v-col>
+          <div class="d-flex flex-wrap">
+            <v-checkbox
+              class="mr-6"
+              v-for="checkbox in checkboxes"
+              :key="checkbox.label"
+              :label="checkbox.label"
+              v-model="course.days"
+              :value="checkbox.value"
+              multiple
+              dense
+              :error="dayError"
+              @click="dayError = false"
+            ></v-checkbox>
+          </div>
         </v-row>
       </v-form>
     </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" class="mr-2" text @click="closeModal">
+        Close
+      </v-btn>
+      <v-btn
+        v-if="!editMode"
+        :disabled="!isValid"
+        color="success"
+        @click="onModalBtn('add-course')"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+      <v-btn
+        v-else
+        :disabled="!isValid"
+        color="success"
+        @click="onModalBtn('edit-course')"
+      >
+        <v-icon>mdi-pencil</v-icon>
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script>
 import TimePicker from "../components/TimePicker";
 export default {
-  name: "AddCourse",
+  name: "CourseModal",
   props: {
     courses: Array,
+    editMode: Boolean,
+    courseToEdit: String,
   },
   components: {
     TimePicker,
@@ -102,12 +121,12 @@ export default {
         { label: "Sun", value: "sunday" },
       ],
       course: {
-        courseID: null,
-        courseName: null,
-        instructor: null,
+        courseID: "",
+        courseName: "",
+        instructor: "",
         days: [],
-        startTime: null,
-        endTime: null,
+        startTime: "",
+        endTime: "",
       },
       // client side rules for validation only runs for client
       rules: {
@@ -120,21 +139,31 @@ export default {
     };
   },
   methods: {
-    onAddBtn() {
+    clearForm() {
+      // empty out this.courses object for next course
+      this.$refs.form.reset(); // reset all fields so errors aren't thrown
+      for (let key in this.course) {
+        if (key === "days") {
+          this.course.days = [];
+        } else {
+          this.course[key] = "";
+        }
+      }
+    },
+    closeModal() {
+      if (this.editMode) {
+        this.clearForm();
+      }
+      this.$emit("close-modal");
+    },
+    onModalBtn(event) {
       if (this.course.days.length === 0) {
         this.dayError = true;
       } else {
-        const courseToAdd = { ...this.course };
-        this.$emit("add-course", courseToAdd);
-        // empty out this.courses object for next course
-        for (let key in this.course) {
-          if (key === "days") {
-            this.course.days = [];
-          } else {
-            this.course[key] = null;
-          }
-        }
-        this.$refs.form.reset(); // reset all fields so errors aren't thrown
+        const newCourse = { ...this.course };
+        this.$emit(event, newCourse, this.courseToEdit);
+        this.$emit("close-modal");
+        this.clearForm();
       }
     },
     setStartTime(time) {
@@ -151,7 +180,7 @@ export default {
       // this looks bad comparing time strings like this, but...
       // since Vuetify calendar always spits out 24hr times 0 padded, this works
       if (start > end || start === end) {
-        this.timeError = "Please provide valid times.";
+        this.timeError = "Invalid times.";
       } else {
         this.timeError = "";
       }
@@ -160,11 +189,23 @@ export default {
   computed: {
     // checks all names of added courses to determine if current has already been added
     uniqueCourse() {
-      const currentCourseID = this.course.courseID;
-      return (
-        this.courses.every((course) => currentCourseID !== course.courseID) ||
-        "You've already added this course!"
+      if (!this.editMode) {
+        const currentCourseID = this.course.courseID;
+        return (
+          this.courses.every((course) => currentCourseID !== course.courseID) ||
+          "You've already added this course!"
+        );
+      }
+      return true;
+    },
+  },
+  watch: {
+    // watches for prop change and makes shallow copy of object it finds in parent component array
+    courseToEdit() {
+      const courseCopy = this.courses.find(
+        (course) => course.courseID === this.courseToEdit
       );
+      this.course = { ...courseCopy };
     },
   },
 };

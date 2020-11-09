@@ -3,10 +3,10 @@
     <!-- v-card-title causes weird formatting here -->
     <v-container v-if="!editable" fluid class="px-4 pb-0 pt-3">
       <v-row>
-        <v-col cols="12" sm="9">
+        <v-col cols="12" lg="8" sm="9">
           <div class="text-h5">{{ localSchedule.scheduleTitle }}</div>
         </v-col>
-        <v-col cols="12" sm="3" class="d-flex justify-end align-center">
+        <v-col cols="12" lg="4" sm="3" class="d-flex justify-end align-center">
           <div class="text-button text--secondary">
             {{ localSchedule.semester + " | " + localSchedule.semesterYear }}
           </div>
@@ -15,7 +15,7 @@
     </v-container>
     <v-container v-else fluid class="px-4 pb-0 pt-3">
       <v-row>
-        <v-col cols="12" sm="9" class="py-0">
+        <v-col cols="12" lg="8" sm="9" class="py-0">
           <v-text-field
             v-model="localSchedule.scheduleTitle"
             label="Schedule Title"
@@ -23,7 +23,12 @@
             @input="onTitleChange"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="3" class="d-flex justify-end align-center py-0">
+        <v-col
+          cols="12"
+          lg="4"
+          sm="3"
+          class="d-flex justify-end align-center py-0"
+        >
           <v-select
             v-model="localSchedule.semester"
             :items="items"
@@ -39,7 +44,10 @@
       <v-sheet height="550">
         <v-calendar
           ref="calendar"
-          :now="value"
+          :now="today"
+          :start="start"
+          :end="end"
+          :value="today"
           :events="parseCourses"
           type="week"
         >
@@ -67,7 +75,9 @@ export default {
   data() {
     return {
       localSchedule: this.schedule,
-      value: "2020-11-04", // this is very bad, but it just so happens this week has Sun = 1 and Sat = 7
+      start: "2020-11-01",
+      end: "2020-11-07",
+      today: "2020-11-04", // this is very bad, but it just so happens this week has Sun = 1 and Sat = 7
       // all events will be visualized on this week only
       items: ["Fall", "Spring", "Summer", "Winter"],
       assocDays: {
