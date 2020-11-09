@@ -49,6 +49,9 @@
           :end="end"
           :value="today"
           :events="parseCourses"
+          :first-interval="7"
+          :interval-minutes="60"
+          :interval-count="16"
           type="week"
         >
         </v-calendar>

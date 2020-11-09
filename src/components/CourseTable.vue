@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="0" outlined rounded="rounded-lg" class="mt-lg-0 mt-4">
     <v-data-table
-      :headers="headers"
+      :headers="determineColNames"
       :items="formatRows"
       hide-default-footer
       disable-sort
@@ -10,7 +10,7 @@
         <v-card-title>
           Courses
           <v-spacer></v-spacer>
-          <v-dialog v-model="courseModal" max-width="900">
+          <v-dialog v-if="editable" v-model="courseModal" max-width="900">
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon large dense color="primary" v-bind="attrs" v-on="on">
                 <v-icon>
@@ -32,7 +32,7 @@
       <template v-slot:no-data>
         Add a course to get started!
       </template>
-      <template v-slot:[`item.actions`]="{ item }">
+      <template v-if="editable" v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="onEditRow(item.courseID)">
           mdi-pencil
         </v-icon>
@@ -61,17 +61,8 @@ export default {
   data() {
     return {
       courseModal: false,
-      editMode: false,
+      editMode: false, // not to be confused with editable prop, used in CourseModal
       courseToEdit: "",
-      headers: [
-        { text: "Actions", value: "actions" },
-        { text: "CourseID", value: "courseID" },
-        { text: "Name", value: "courseName" },
-        { text: "Instructor", value: "instructor" },
-        { text: "Start", value: "startTime" },
-        { text: "End", value: "endTime" },
-        { text: "Days", value: "formattedDays" },
-      ],
     };
   },
   methods: {
@@ -92,6 +83,24 @@ export default {
     },
   },
   computed: {
+    // removes actions column when a schedule is only meant for viewing
+    determineColNames() {
+      const names = [
+        { text: "Actions", value: "actions" },
+        { text: "CourseID", value: "courseID" },
+        { text: "Name", value: "courseName" },
+        { text: "Instructor", value: "instructor" },
+        { text: "Start", value: "startTime" },
+        { text: "End", value: "endTime" },
+        { text: "Days", value: "formattedDays" },
+      ];
+      if (this.editable) {
+        return names;
+      } else {
+        names.splice(0, 1);
+        return names;
+      }
+    },
     // TODO: sort days in order for better table format
     formatRows() {
       return this.courses.map((course) => {

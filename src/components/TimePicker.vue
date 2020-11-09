@@ -20,6 +20,8 @@
         v-model="time"
         format="ampm"
         scrollable
+        min="07:00"
+        max="23:00"
         :allowed-minutes="allowedStep"
       >
         <v-spacer></v-spacer>

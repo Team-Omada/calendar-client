@@ -151,10 +151,10 @@ export default {
       }
     },
     closeModal() {
+      this.$emit("close-modal");
       if (this.editMode) {
         this.clearForm();
       }
-      this.$emit("close-modal");
     },
     onModalBtn(event) {
       if (this.course.days.length === 0) {
