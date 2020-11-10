@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import mappedDays from "../utils/mappedDays";
 export default {
   name: "Calendar",
   props: {
@@ -83,15 +84,7 @@ export default {
       today: "2020-11-04", // this is very bad, but it just so happens this week has Sun = 1 and Sat = 7
       // all events will be visualized on this week only
       items: ["Fall", "Spring", "Summer", "Winter"],
-      assocDays: {
-        sunday: 1,
-        monday: 2,
-        tuesday: 3,
-        wednesday: 4,
-        thursday: 5,
-        friday: 6,
-        saturday: 7,
-      },
+      assocDays: mappedDays, // maps days to numbers
     };
   },
   methods: {

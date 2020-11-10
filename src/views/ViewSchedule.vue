@@ -5,7 +5,7 @@
         <Calendar :schedule="schedule" />
       </v-col>
       <v-col cols="12" lg="6">
-        <CourseTable :courses="schedule.courses" />
+        <CourseTable :courses="schedule.courses" :editable="editable" />
       </v-col>
     </v-row>
   </v-container>
@@ -17,7 +17,7 @@
 <script>
 import Calendar from "../components/Calendar";
 import CourseTable from "../components/CourseTable";
-import { getScheduleById } from "../API/index";
+import { getScheduleById } from "../API";
 export default {
   name: "ViewSchedule",
   components: {
@@ -27,15 +27,17 @@ export default {
   data() {
     return {
       schedule: null,
+      editable: false,
     };
   },
-  async created() {
+  async mounted() {
     const scheduleID = this.$route.params.scheduleID;
     try {
       const res = await getScheduleById(scheduleID);
+      this.editable = res.data.results.userID === this.$store.state.user.userID;
       this.schedule = res.data.results;
     } catch (err) {
-      console.log("Couldn't find schedule with that ID");
+      console.log("Couldn't find schedule with that ID", err);
     }
   },
 };

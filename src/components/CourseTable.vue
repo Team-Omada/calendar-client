@@ -46,6 +46,7 @@
 
 <script>
 import CourseModal from "../components/CourseModal";
+import mappedDays from "../utils/mappedDays";
 export default {
   name: "CourseTable",
   components: {
@@ -63,6 +64,7 @@ export default {
       courseModal: false,
       editMode: false, // not to be confused with editable prop, used in CourseModal
       courseToEdit: "",
+      assocDays: mappedDays,
     };
   },
   methods: {
@@ -105,7 +107,10 @@ export default {
     formatRows() {
       return this.courses.map((course) => {
         let dayString = "";
-        course.days.forEach((day) => {
+        const sortedDays = course.days.sort((a, b) => {
+          return this.assocDays[a] - this.assocDays[b];
+        });
+        sortedDays.forEach((day) => {
           let dayFormat = day.charAt(0).toUpperCase() + day.slice(1);
           if (
             dayFormat === "Monday" ||
