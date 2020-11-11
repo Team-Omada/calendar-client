@@ -21,39 +21,15 @@
       </router-link>
     </div>
     <v-spacer></v-spacer>
-    <v-btn v-if="!isLoggedIn" to="/login" text class="mr-2">
-      Login
-    </v-btn>
-    <v-btn v-if="!isLoggedIn" to="/register" text>
-      Register
-    </v-btn>
-    <v-btn v-if="isLoggedIn" to="/dashboard" text class="mr-2">
-      Dashboard
-    </v-btn>
-    <v-btn v-if="isLoggedIn" to="/createschedule" text class="mr-2">
-      Create <v-icon right>mdi-calendar-plus</v-icon>
-    </v-btn>
-    <v-tooltip bottom v-if="isLoggedIn">
-      <template v-slot:activator="{ on, attrs }">
-        <v-icon text @click="onLogoutBtn" v-on="on" v-bind="attrs">
-          mdi-logout
-        </v-icon>
-      </template>
-      <span>Logout</span>
-    </v-tooltip>
+    <v-icon v-if="isLoggedIn" large @click="$emit('open-drawer')">
+      mdi-menu
+    </v-icon>
   </v-app-bar>
 </template>
 
 <script>
 export default {
   name: "NavHeader",
-  methods: {
-    onLogoutBtn() {
-      this.$store.dispatch("setToken", null);
-      this.$store.dispatch("setUser", null);
-      this.$router.push({ path: "login" });
-    },
-  },
   computed: {
     isLoggedIn() {
       return this.$store.state.isLoggedIn;
