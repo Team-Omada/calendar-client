@@ -65,15 +65,7 @@ import mappedDays from "../utils/mappedDays";
 export default {
   name: "Calendar",
   props: {
-    schedule: {
-      type: Object,
-      default: () => ({
-        scheduleTitle: "",
-        semester: "",
-        semesterYear: "",
-        courses: [],
-      }),
-    },
+    schedule: Object,
     editable: Boolean,
   },
   data() {

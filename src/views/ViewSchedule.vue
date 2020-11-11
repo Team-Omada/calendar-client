@@ -34,8 +34,8 @@ export default {
     const scheduleID = this.$route.params.scheduleID;
     try {
       const res = await getScheduleById(scheduleID);
-      this.editable = res.data.results.userID === this.$store.state.user.userID;
-      this.schedule = res.data.results;
+      this.editable = res.data.userID === this.$store.state.user.userID;
+      this.schedule = res.data;
     } catch (err) {
       console.log("Couldn't find schedule with that ID", err);
     }
