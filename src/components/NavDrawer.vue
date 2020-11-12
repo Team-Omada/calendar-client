@@ -66,7 +66,7 @@ export default {
       this.$emit("input", false);
       this.$store.dispatch("setToken", null);
       this.$store.dispatch("setUser", null);
-      this.$router.push({ path: "login" });
+      this.$router.push({ path: "/login" });
     },
   },
   computed: {
