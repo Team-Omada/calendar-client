@@ -62,10 +62,13 @@ export default {
       this.$emit("time-select", this.time);
     },
   },
-  // if there is an existing time (edit course), display it instead of nothing
   watch: {
-    existingTime() {
-      this.time = this.existingTime;
+    existingTime: {
+      // if there is an existing time (edit course), display it instead of nothing
+      immediate: true,
+      handler() {
+        this.time = this.existingTime;
+      },
     },
     error() {
       this.errorMsg = this.error;

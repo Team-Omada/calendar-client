@@ -200,13 +200,18 @@ export default {
     },
   },
   watch: {
-    // watches for prop change and makes shallow copy of object it finds in parent component array
-    courseToEdit() {
-      const courseCopy = this.courses.find(
-        (course) => course.courseID === this.courseToEdit
-      );
-      this.course = { ...courseCopy };
-    },
+    courseToEdit: {
+      immediate: true,
+      // watches for courseToEdit and makes shallow copy of object it finds in parent component array
+      handler() {
+        if(this.courseToEdit) {
+          const courseCopy = this.courses.find(
+            (course) => course.courseID === this.courseToEdit
+          );
+          this.course = { ...courseCopy };
+        }
+      },
+    }
   },
 };
 </script>
