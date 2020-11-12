@@ -83,7 +83,7 @@ export default {
         });
         this.$store.dispatch("setUser", res.data.user);
         this.$store.dispatch("setToken", res.data.token);
-        this.$router.push({ path: "dashboard" });
+        this.$router.push({ path: "/dashboard" });
       } catch (err) {
         if (err.response) {
           // any non-200 responses will be either 401's or 500's

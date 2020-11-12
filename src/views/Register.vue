@@ -132,7 +132,7 @@ export default {
         });
         this.$store.dispatch("setUser", res.data.user);
         this.$store.dispatch("setToken", res.data.token);
-        this.$router.push({ path: "dashboard" });
+        this.$router.push({ path: "/dashboard" });
       } catch (err) {
         if (err.response) {
           // any non-200 responses are handled using server's error class "info" and "message" fields
