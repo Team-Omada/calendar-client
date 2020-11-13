@@ -8,16 +8,6 @@
           @title-change="(value) => (schedule.title = value)"
           @semester-change="(value) => (schedule.semesterInfo = value)"
         />
-        <div class="d-flex justify-center mt-4">
-          <v-btn
-            :loading="loading"
-            :disabled="!validSchedule"
-            color="success"
-            @click="onPublishBtn"
-          >
-            Publish!
-          </v-btn>
-        </div>
       </v-col>
       <v-col cols="12" lg="6">
         <CourseTable
@@ -27,6 +17,23 @@
           @delete-course="deleteCourse"
           @add-course="pushCourse"
         />
+        <div class="d-flex justify-space-between mt-4">
+          <v-btn
+            text
+            color="error"
+            @click="onResetBtn"
+          >
+            Reset
+          </v-btn>
+          <v-btn
+            :loading="loading"
+            :disabled="!validSchedule"
+            color="success"
+            @click="onPublishBtn"
+          >
+            Publish!
+          </v-btn>
+        </div>
       </v-col>
     </v-row>
     <v-snackbar v-model="showSnackbar" timeout="2000" :color="snackBarColor">
@@ -112,6 +119,12 @@ export default {
       }
       this.loading = false;
     },
+    onResetBtn() {
+      this.schedule.scheduleTitle = "";
+      this.schedule.semester = "";
+      this.schedule.semesterYear = new Date().getFullYear();
+      this.schedule.courses.splice(0); // avoids declaring assigning new array
+    }
   },
   computed: {
     scheduleChange() {

@@ -1,6 +1,6 @@
 <template>
   <v-card elevation="0" outlined rounded="rounded-lg">
-    <v-card-title>Add Course</v-card-title>
+    <v-card-title>{{editMode ? "Edit Course" : "Add Course"}}</v-card-title>
     <v-card-text class="pb-0">
       <v-form v-model="isValid" ref="form">
         <v-row dense>

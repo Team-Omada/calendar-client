@@ -6,6 +6,23 @@
       </v-col>
       <v-col cols="12" lg="6">
         <CourseTable :courses="schedule.courses" :editable="editable" />
+        <div class="d-flex justify-space-between mt-4">
+          <v-btn
+            text
+            color="error"
+            @click="onDeleteBtn"
+          >
+            <v-icon left>mdi-delete</v-icon> Delete
+          </v-btn>
+          <v-btn
+            color="success"
+            :disabled="!wasEdited"
+            :loading="loading"
+            @click="onUpdateBtn"
+          >
+            Update!
+          </v-btn>
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -26,9 +43,19 @@ export default {
   },
   data() {
     return {
+      wasEdited: false,
+      loading: false,
       schedule: null,
       editable: false,
     };
+  },
+  methods: {
+    onDeleteBtn() {
+
+    },
+    onUpdateBtn() {
+
+    }
   },
   async mounted() {
     const scheduleID = this.$route.params.scheduleID;
