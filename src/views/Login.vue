@@ -81,8 +81,8 @@ export default {
           email: this.email,
           password: this.password,
         });
-        this.$store.dispatch("setUser", res.data.user);
         this.$store.dispatch("setToken", res.data.token);
+        this.$store.dispatch("setUser", res.data.user);
         this.$router.push({ path: "/dashboard" });
       } catch (err) {
         if (err.response) {
