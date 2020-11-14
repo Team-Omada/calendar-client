@@ -18,11 +18,7 @@
           @add-course="pushCourse"
         />
         <div class="d-flex justify-space-between mt-4">
-          <v-btn
-            text
-            color="error"
-            @click="onResetBtn"
-          >
+          <v-btn text color="error" @click="onResetBtn">
             Reset
           </v-btn>
           <v-btn
@@ -81,7 +77,9 @@ export default {
     },
     // edits course object, replacing if existing
     editCourse(course, originalID) {
-      const index = this.schedule.courses.indexOf(originalID);
+      const index = this.schedule.courses.findIndex(
+        (course) => course.courseID === originalID
+      );
       this.schedule.courses.splice(index, 1, course);
       this.openSnackBar(`${originalID} was edited!`, "success");
     },
@@ -124,7 +122,7 @@ export default {
       this.schedule.semester = "";
       this.schedule.semesterYear = new Date().getFullYear();
       this.schedule.courses.splice(0); // avoids declaring assigning new array
-    }
+    },
   },
   computed: {
     scheduleChange() {

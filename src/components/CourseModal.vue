@@ -1,6 +1,6 @@
 <template>
   <v-card elevation="0" outlined rounded="rounded-lg">
-    <v-card-title>{{editMode ? "Edit Course" : "Add Course"}}</v-card-title>
+    <v-card-title>{{ editMode ? "Edit Course" : "Add Course" }}</v-card-title>
     <v-card-text class="pb-0">
       <v-form v-model="isValid" ref="form">
         <v-row dense>
@@ -161,7 +161,8 @@ export default {
         this.dayError = true;
       } else {
         const newCourse = { ...this.course };
-        this.$emit(event, newCourse, this.courseToEdit);
+        const originalID = this.courseToEdit;
+        this.$emit(event, newCourse, originalID);
         this.$emit("close-modal");
         this.clearForm();
       }
@@ -204,14 +205,14 @@ export default {
       immediate: true,
       // watches for courseToEdit and makes shallow copy of object it finds in parent component array
       handler() {
-        if(this.courseToEdit) {
+        if (this.courseToEdit) {
           const courseCopy = this.courses.find(
             (course) => course.courseID === this.courseToEdit
           );
           this.course = { ...courseCopy };
         }
       },
-    }
+    },
   },
 };
 </script>
