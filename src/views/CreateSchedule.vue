@@ -32,14 +32,6 @@
         </div>
       </v-col>
     </v-row>
-    <v-snackbar v-model="showSnackbar" timeout="2000" :color="snackBarColor">
-      {{ snackBarMsg }}
-      <template v-slot:action="{ attrs }">
-        <v-btn text v-bind="attrs" @click="showSnackbar = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -47,19 +39,17 @@
 import Calendar from "../components/Calendar";
 import CourseTable from "../components/CourseTable";
 import { postSchedule } from "../API";
-import { handleGeneralErr } from "../utils/errorHandling";
+import { errorHandlingMixin } from "../mixins/errorHandlingMixin";
+import { calendarViewMixin } from "../mixins/calendarViewMixin";
 export default {
   name: "CreateSchedule",
   components: {
     Calendar,
     CourseTable,
   },
+  mixins: [errorHandlingMixin, calendarViewMixin],
   data() {
     return {
-      showSnackbar: false,
-      snackBarMsg: "",
-      snackBarColor: "",
-      validSchedule: false,
       loading: false,
       schedule: {
         scheduleTitle: "",
@@ -70,33 +60,6 @@ export default {
     };
   },
   methods: {
-    // a little message at the bottom of the screen
-    openSnackBar(msg, color) {
-      this.showSnackbar = true;
-      this.snackBarMsg = msg;
-      this.snackBarColor = color;
-    },
-    // edits course object, replacing if existing
-    editCourse(course, originalID) {
-      const index = this.schedule.courses.findIndex(
-        (course) => course.courseID === originalID
-      );
-      this.schedule.courses.splice(index, 1, course);
-      this.openSnackBar(`${originalID} was edited!`, "success");
-    },
-    // deletes course object in the courses array
-    deleteCourse(id) {
-      this.schedule.courses.splice(
-        this.schedule.courses.findIndex((course) => course.courseID === id),
-        1
-      );
-      this.openSnackBar(`${id} deleted!`, "success");
-    },
-    // adds a schedule to the courses array
-    pushCourse(value) {
-      this.schedule.courses.push(value);
-      this.openSnackBar("Course was added to your schedule!", "success");
-    },
     async onPublishBtn() {
       this.loading = true;
       try {
@@ -104,7 +67,7 @@ export default {
         const scheduleID = res.data.scheduleID;
         this.$router.push({ path: `viewschedule/${scheduleID}` });
       } catch (err) {
-        this.openSnackBar(handleGeneralErr(err), "error");
+        this.openSnackBar(this.handleGeneralErr(err), "error");
       }
       this.loading = false;
     },
@@ -113,21 +76,6 @@ export default {
       this.schedule.semester = "";
       this.schedule.semesterYear = new Date().getFullYear();
       this.schedule.courses.splice(0); // avoids declaring assigning new array
-    },
-  },
-  computed: {
-    scheduleChange() {
-      return (
-        this.schedule.scheduleTitle &&
-        this.schedule.semester &&
-        this.schedule.courses.length !== 0
-      );
-    },
-  },
-  watch: {
-    // watching on the above function prevents us from using a deep watcher
-    scheduleChange(value) {
-      this.validSchedule = value;
     },
   },
 };

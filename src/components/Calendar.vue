@@ -61,13 +61,14 @@
 </template>
 
 <script>
-import mappedDays from "../utils/mappedDays";
+import { mappedDaysMixin } from "../mixins/mappedDaysMixin";
 export default {
   name: "Calendar",
   props: {
     schedule: Object,
     editable: Boolean,
   },
+  mixins: [mappedDaysMixin],
   data() {
     return {
       localSchedule: this.schedule,
@@ -76,7 +77,6 @@ export default {
       today: "2020-11-04", // this is very bad, but it just so happens this week has Sun = 1 and Sat = 7
       // all events will be visualized on this week only
       items: ["Fall", "Spring", "Summer", "Winter"],
-      assocDays: mappedDays, // maps days to numbers
     };
   },
   methods: {
@@ -113,13 +113,13 @@ export default {
       /**
        * Formats according to Vuetify calendar event standards
        * Needs at least name, start, and end in the object
-       * Uses assocDays to map list of days to associated day in week of this.value
+       * Uses mappedDays to map list of days to associated day in week of this.today
        */
       this.schedule.courses.forEach((course) => {
         course.days.forEach((day) => {
           const formattedDay = day.toLowerCase();
-          const start = `2020-11-0${this.assocDays[formattedDay]} ${course.startTime}`;
-          const end = `2020-11-0${this.assocDays[formattedDay]} ${course.endTime}`;
+          const start = `2020-11-0${this.mappedDays[formattedDay]} ${course.startTime}`;
+          const end = `2020-11-0${this.mappedDays[formattedDay]} ${course.endTime}`;
           formatted.push({
             name: course.courseID,
             start: start,

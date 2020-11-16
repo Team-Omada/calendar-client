@@ -30,17 +30,18 @@
 <script>
 import Calendar from "../components/Calendar";
 import CourseTable from "../components/CourseTable";
-import { getScheduleById, deleteSchedule, putSchedule } from "../API";
-import { handleGeneralErr } from "../utils/errorHandling";
+import { getScheduleById, putSchedule, deleteSchedule } from "../API";
+import { errorHandlingMixin } from "../mixins/errorHandlingMixin";
+import { calendarViewMixin } from "../mixins/calendarViewMixin";
 export default {
   name: "ViewSchedule",
   components: {
     Calendar,
     CourseTable,
   },
+  mixins: [errorHandlingMixin, calendarViewMixin],
   data() {
     return {
-      wasEdited: false,
       loading: false,
       schedule: null,
       editable: false,
@@ -51,17 +52,19 @@ export default {
       try {
         this.loading = true;
         await deleteSchedule(this.schedule.scheduleID);
+        this.$emit("open-snackbar", "Schedule successfully deleted", "success");
         this.$router.push({ path: "/dashboard" });
       } catch (err) {
         this.loading = false;
-        console.log(handleGeneralErr(err));
+        this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
       }
     },
     async onUpdateBtn() {
       try {
         await putSchedule(this.schedule.scheduleID, this.schedule);
+        this.wasEdited = false;
       } catch (err) {
-        console.log(handleGeneralErr(err));
+        this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
       }
     },
   },
@@ -72,7 +75,8 @@ export default {
       this.editable = res.data.userID === this.$store.state.user.userID;
       this.schedule = res.data;
     } catch (err) {
-      console.log(handleGeneralErr(err));
+      this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
+      this.$router.push({ path: "/dashboard" });
     }
   },
 };

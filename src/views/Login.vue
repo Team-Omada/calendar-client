@@ -56,9 +56,10 @@
 
 <script>
 import { login } from "../API";
-import { handleGeneralErr } from "../utils/errorHandling";
+import { errorHandlingMixin } from "../mixins/errorHandlingMixin";
 export default {
   name: "Login",
+  mixins: [errorHandlingMixin],
   data() {
     return {
       email: null,
@@ -86,7 +87,7 @@ export default {
         this.$store.dispatch("setUser", res.data.user);
         this.$router.push({ path: "/dashboard" });
       } catch (err) {
-        this.authError = handleGeneralErr(err);
+        this.authError = this.handleGeneralErr(err);
       }
       this.loading = false;
     },
