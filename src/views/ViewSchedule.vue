@@ -7,11 +7,7 @@
       <v-col cols="12" lg="6">
         <CourseTable :courses="schedule.courses" :editable="editable" />
         <div class="d-flex justify-space-between mt-4">
-          <v-btn
-            text
-            color="error"
-            @click="onDeleteBtn"
-          >
+          <v-btn text color="error" @click="onDeleteBtn">
             <v-icon left>mdi-delete</v-icon> Delete
           </v-btn>
           <v-btn
@@ -34,7 +30,8 @@
 <script>
 import Calendar from "../components/Calendar";
 import CourseTable from "../components/CourseTable";
-import { getScheduleById } from "../API";
+import { getScheduleById, deleteSchedule, putSchedule } from "../API";
+import { handleGeneralErr } from "../utils/errorHandling";
 export default {
   name: "ViewSchedule",
   components: {
@@ -50,12 +47,23 @@ export default {
     };
   },
   methods: {
-    onDeleteBtn() {
-
+    async onDeleteBtn() {
+      try {
+        this.loading = true;
+        await deleteSchedule(this.schedule.scheduleID);
+        this.$router.push({ path: "/dashboard" });
+      } catch (err) {
+        this.loading = false;
+        console.log(handleGeneralErr(err));
+      }
     },
-    onUpdateBtn() {
-
-    }
+    async onUpdateBtn() {
+      try {
+        await putSchedule(this.schedule.scheduleID, this.schedule);
+      } catch (err) {
+        console.log(handleGeneralErr(err));
+      }
+    },
   },
   async mounted() {
     const scheduleID = this.$route.params.scheduleID;
@@ -64,7 +72,7 @@ export default {
       this.editable = res.data.userID === this.$store.state.user.userID;
       this.schedule = res.data;
     } catch (err) {
-      console.log("Couldn't find schedule with that ID", err);
+      console.log(handleGeneralErr(err));
     }
   },
 };

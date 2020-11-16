@@ -19,6 +19,7 @@ function login(data) {
   return api().post("login", data);
 }
 
+// SCHEDULE API
 function postSchedule(scheduleObj) {
   return api().post("schedules", scheduleObj);
 }
@@ -27,6 +28,22 @@ function getScheduleById(scheduleID) {
   return api().get(`schedules/${scheduleID}`);
 }
 
+function deleteSchedule(scheduleID) {
+  return api().get(`schedules/${scheduleID}`);
+}
+
+function putSchedule(scheduleID, data) {
+  return api().put(`schedules/${scheduleID}`, data);
+}
+
 // Other API calls go here
 
-export { api, register, login, postSchedule, getScheduleById };
+export {
+  api,
+  register,
+  login,
+  postSchedule,
+  getScheduleById,
+  deleteSchedule,
+  putSchedule,
+};

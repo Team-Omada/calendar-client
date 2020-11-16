@@ -56,6 +56,7 @@
 
 <script>
 import { login } from "../API";
+import { handleGeneralErr } from "../utils/errorHandling";
 export default {
   name: "Login",
   data() {
@@ -85,17 +86,7 @@ export default {
         this.$store.dispatch("setUser", res.data.user);
         this.$router.push({ path: "/dashboard" });
       } catch (err) {
-        if (err.response) {
-          // any non-200 responses will be either 401's or 500's
-          // both fields will show this error
-          this.authError = err.response.data.message;
-        } else if (err.request) {
-          this.authError = "The request couldn't be sent.";
-          console.log("Request couldn't be sent: ", err);
-        } else {
-          this.authError = "Something went wrong...";
-          console.log("Something happened when setting up request: ", err);
-        }
+        this.authError = handleGeneralErr(err);
       }
       this.loading = false;
     },

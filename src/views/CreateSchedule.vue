@@ -47,6 +47,7 @@
 import Calendar from "../components/Calendar";
 import CourseTable from "../components/CourseTable";
 import { postSchedule } from "../API";
+import { handleGeneralErr } from "../utils/errorHandling";
 export default {
   name: "CreateSchedule",
   components: {
@@ -103,17 +104,7 @@ export default {
         const scheduleID = res.data.scheduleID;
         this.$router.push({ path: `viewschedule/${scheduleID}` });
       } catch (err) {
-        if (err.response) {
-          // any non-200 responses will be either 401's or 500's
-          // both fields will show this error
-          this.openSnackBar(err.response.data.message, "error");
-        } else if (err.request) {
-          this.openSnackBar("Request couldn't be sent.", "error");
-          console.log(this.snackBarMsg, err);
-        } else {
-          this.openSnackBar("Something happened setting up request.", "error");
-          console.log(this.snackBarMsg, err);
-        }
+        this.openSnackBar(handleGeneralErr(err), "error");
       }
       this.loading = false;
     },
