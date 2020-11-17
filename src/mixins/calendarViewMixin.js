@@ -1,14 +1,13 @@
 export const calendarViewMixin = {
-  data() {
-    return {
-      validSchedule: false,
-      wasEdited: false,
-    };
-  },
   methods: {
+    titleChange(value) {
+      this.schedule.title = value;
+    },
+    semesterChange(value) {
+      this.schedule.semester = value;
+    },
     // edits course object, replacing if existing
     editCourse(course, originalID) {
-      this.wasEdited = true;
       const index = this.schedule.courses.findIndex(
         (course) => course.courseID === originalID
       );
@@ -33,19 +32,13 @@ export const calendarViewMixin = {
       );
     },
   },
-  // computed: {
-  //   scheduleChange() {
-  //     return (
-  //       this.schedule.scheduleTitle &&
-  //       this.schedule.semester &&
-  //       this.schedule.courses.length !== 0
-  //     );
-  //   },
-  // },
-  // watch: {
-  //   // watching on the above function prevents us from using a deep watcher
-  //   scheduleChange(value) {
-  //     this.validSchedule = value;
-  //   },
-  // },
+  computed: {
+    scheduleChange() {
+      return (
+        this.schedule.scheduleTitle &&
+        this.schedule.semester &&
+        this.schedule.courses.length !== 0
+      );
+    },
+  },
 };

@@ -2,21 +2,33 @@
   <v-container v-if="schedule" fluid>
     <v-row>
       <v-col cols="12" lg="6">
-        <Calendar :schedule="schedule" />
+        <Calendar
+          :schedule="schedule"
+          :editable="editable"
+          @title-change="titleChange"
+          @semester-change="semesterChange"
+        />
       </v-col>
       <v-col cols="12" lg="6">
-        <CourseTable :courses="schedule.courses" :editable="editable" />
+        <CourseTable
+          :courses="schedule.courses"
+          :editable="editable"
+          @edit-course="editCourse"
+          @delete-course="deleteCourse"
+          @add-course="pushCourse"
+        />
         <div class="d-flex justify-space-between mt-4">
           <v-btn text color="error" @click="onDeleteBtn">
             <v-icon left>mdi-delete</v-icon> Delete
           </v-btn>
           <v-btn
             color="success"
-            :disabled="!wasEdited"
+            :disabled="!scheduleChange"
             :loading="loading"
             @click="onUpdateBtn"
           >
-            Update!
+            Update
+            <v-icon right>mdi-pencil</v-icon>
           </v-btn>
         </div>
       </v-col>
@@ -62,7 +74,7 @@ export default {
     async onUpdateBtn() {
       try {
         await putSchedule(this.schedule.scheduleID, this.schedule);
-        this.wasEdited = false;
+        this.$emit("open-snackbar", "Schedule successfully updated", "success");
       } catch (err) {
         this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
       }

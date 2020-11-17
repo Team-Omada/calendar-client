@@ -29,7 +29,7 @@ function getScheduleById(scheduleID) {
 }
 
 function deleteSchedule(scheduleID) {
-  return api().get(`schedules/${scheduleID}`);
+  return api().delete(`schedules/${scheduleID}`);
 }
 
 function putSchedule(scheduleID, data) {

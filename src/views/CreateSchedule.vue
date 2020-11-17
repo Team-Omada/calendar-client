@@ -5,8 +5,8 @@
         <Calendar
           :schedule="schedule"
           editable
-          @title-change="(value) => (schedule.title = value)"
-          @semester-change="(value) => (schedule.semesterInfo = value)"
+          @title-change="titleChange"
+          @semester-change="semesterChange"
         />
       </v-col>
       <v-col cols="12" lg="6">
@@ -23,7 +23,7 @@
           </v-btn>
           <v-btn
             :loading="loading"
-            :disabled="!validSchedule"
+            :disabled="!scheduleChange"
             color="success"
             @click="onPublishBtn"
           >

@@ -203,13 +203,13 @@ export default {
   watch: {
     courseToEdit: {
       immediate: true,
-      // watches for courseToEdit and makes shallow copy of object it finds in parent component array
+      // watches for courseToEdit and makes deep copy of object it finds in parent component array
       handler() {
         if (this.courseToEdit) {
           const courseCopy = this.courses.find(
             (course) => course.courseID === this.courseToEdit
           );
-          this.course = { ...courseCopy };
+          this.course = { ...courseCopy, days: [...courseCopy.days] };
         }
       },
     },
