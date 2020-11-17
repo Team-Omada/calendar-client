@@ -4,12 +4,12 @@
       :elevation="hover ? 3 : 0"
       outlined
       shaped
-      @click="$router.push({ path: `/createschedule` })"
+      @click="$router.push({ path: `/viewschedule/${schedule.scheduleID}` })"
     >
       <v-container fluid class="px-4 pb-0 pt-3">
         <v-row>
           <v-col cols="12" lg="8" sm="9" class="py-0">
-            <div class="text-h6">Title of schedule to get attention.</div>
+            <div class="text-h6">{{ schedule.scheduleTitle }}</div>
           </v-col>
           <v-col
             cols="12"
@@ -18,7 +18,7 @@
             class="d-flex justify-sm-end align-center py-0"
           >
             <div class="text-button text--secondary">
-              Fall | 2020
+              {{ schedule.semester + " | " + schedule.semesterYear }}
             </div>
           </v-col>
         </v-row>
@@ -28,20 +28,18 @@
         <v-container class="py-0">
           <v-row>
             <v-col cols="12" sm="7" class="px-0">
-              <v-chip class="mr-2" color="success" outlined small
-                >MATH485</v-chip
-              >
-              <v-chip class="mr-2" color="success" outlined small
-                >MATH374</v-chip
-              >
-              <v-chip class="mr-2" color="success" outlined small
-                >MATH441</v-chip
+              <v-chip
+                class="mr-2"
+                color="success"
+                outlined
+                small
+                v-for="course in formatCourses"
+                :key="course.courseID"
+                >{{ course }}</v-chip
               >
             </v-col>
             <v-col cols="12" sm="5" class="px-0">
-              <div class="d-flex justify-end">
-                Posted: Nov. 12th 2020 | 6:30PM
-              </div>
+              <div class="d-flex justify-end">Posted: {{ formatDate }}</div>
             </v-col>
           </v-row>
         </v-container>
@@ -51,10 +49,10 @@
             <v-icon large left>mdi-account-circle</v-icon>
             <v-list-item-content>
               <v-list-item-title>
-                username
+                {{ schedule.username }}
               </v-list-item-title>
               <v-list-item-subtitle>
-                email@cougars.csusm.edu
+                {{ schedule.email }}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -69,12 +67,27 @@
 </template>
 
 <script>
+import { format } from "date-fns";
 export default {
   name: "ScheduleCard",
+  props: {
+    schedule: Object,
+  },
   data() {
     return {
       bookmarked: false,
     };
+  },
+  computed: {
+    formatDate() {
+      return format(
+        new Date(this.schedule.datePosted),
+        "LLL. d, yyyy | hh:mm a"
+      );
+    },
+    formatCourses() {
+      return this.schedule.courses.split(", ").splice(0, 3);
+    },
   },
 };
 </script>

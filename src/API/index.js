@@ -36,6 +36,10 @@ function putSchedule(scheduleID, data) {
   return api().put(`schedules/${scheduleID}`, data);
 }
 
+function getAllSchedules() {
+  return api().get(`schedules`);
+}
+
 // Other API calls go here
 
 export {
@@ -46,4 +50,5 @@ export {
   getScheduleById,
   deleteSchedule,
   putSchedule,
+  getAllSchedules,
 };
