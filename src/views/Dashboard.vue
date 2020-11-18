@@ -1,5 +1,5 @@
 <template>
-  <v-container width="1100">
+  <v-container>
     <v-row>
       <v-col v-if="scheduleList" cols="12" md="8">
         <div v-if="scheduleList.length === 0" class="text-h5 text-center">
@@ -72,9 +72,9 @@ export default {
 
 <style scoped>
 .card-margin {
-  margin-top: 12px;
+  padding: 12px 0;
 }
 .card-margin:first-child {
-  margin-top: 0;
+  padding-top: 0;
 }
 </style>

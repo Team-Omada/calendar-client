@@ -17,7 +17,7 @@
           @delete-course="deleteCourse"
           @add-course="pushCourse"
         />
-        <div class="d-flex justify-space-between mt-4">
+        <div class="d-flex justify-space-between mt-4" v-if="editable">
           <v-btn text color="error" @click="onDeleteBtn">
             <v-icon left>mdi-delete</v-icon> Delete
           </v-btn>

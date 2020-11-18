@@ -58,6 +58,11 @@ export default {
           icon: "mdi-calendar-plus",
           route: "/createschedule",
         },
+        {
+          title: "My Bookmarks",
+          icon: "mdi-star-outline",
+          route: "/bookmarks",
+        },
       ],
     };
   },
