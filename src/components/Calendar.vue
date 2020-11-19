@@ -3,10 +3,15 @@
     <!-- v-card-title causes weird formatting here -->
     <v-container v-if="!editable" fluid class="px-4 pb-0 pt-3">
       <v-row>
-        <v-col cols="12" lg="8" sm="9">
+        <v-col cols="12" lg="8" sm="9" class="pb-0">
           <div class="text-h5">{{ localSchedule.scheduleTitle }}</div>
         </v-col>
-        <v-col cols="12" lg="4" sm="3" class="d-flex justify-end align-center">
+        <v-col
+          cols="12"
+          lg="4"
+          sm="3"
+          class="d-flex justify-sm-end align-center pb-0"
+        >
           <div class="text-button text--secondary">
             {{ localSchedule.semester + " | " + localSchedule.semesterYear }}
           </div>
@@ -40,7 +45,18 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-card-text>
+    <v-card-text class="pt-0">
+      <v-list-item two-line class="px-0" v-if="!editable">
+        <v-icon large left>mdi-account-circle</v-icon>
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ schedule.username }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            {{ schedule.email }}
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
       <v-sheet height="550">
         <v-calendar
           ref="calendar"
@@ -56,12 +72,14 @@
         >
         </v-calendar>
       </v-sheet>
+      <p class="text-right font-italic mt-4 mb-0">Posted on {{ formatDate }}</p>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 import { mappedDaysMixin } from "../mixins/mappedDaysMixin";
+import { format } from "date-fns";
 export default {
   name: "Calendar",
   props: {
@@ -130,6 +148,12 @@ export default {
         });
       });
       return formatted;
+    },
+    formatDate() {
+      return format(
+        new Date(this.schedule.datePosted),
+        "LLL. d, yyyy | h:mm a"
+      );
     },
   },
 };
