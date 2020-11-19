@@ -45,6 +45,14 @@ function getUserBookmarks() {
   return api().get(`bookmarks`);
 }
 
+function deleteBookmark(scheduleID) {
+  return api().delete(`bookmarks/${scheduleID}`);
+}
+
+function postBookmark(scheduleID) {
+  return api().post(`bookmarks/${scheduleID}`);
+}
+
 // Other API calls go here
 
 export {
@@ -57,4 +65,6 @@ export {
   putSchedule,
   getAllSchedules,
   getUserBookmarks,
+  deleteBookmark,
+  postBookmark,
 };

@@ -57,8 +57,10 @@
             </v-list-item-content>
           </v-list-item>
           <v-spacer></v-spacer>
-          <v-btn icon @click.stop="bookmarked = !bookmarked" color="warning">
-            <v-icon>{{ bookmarked ? "mdi-star" : "mdi-star-outline" }}</v-icon>
+          <v-btn icon @click.stop="onStarBtn" color="warning">
+            <v-icon>{{
+              isBookmarked ? "mdi-star" : "mdi-star-outline"
+            }}</v-icon>
           </v-btn>
         </v-card-actions>
       </v-card-text>
@@ -68,15 +70,38 @@
 
 <script>
 import { format } from "date-fns";
+import { postBookmark, deleteBookmark } from "../API";
+import { errorHandlingMixin } from "../mixins/errorHandlingMixin";
 export default {
   name: "ScheduleCard",
   props: {
     schedule: Object,
+    bookmarked: {
+      type: Boolean,
+      default: false,
+    },
   },
+  mixins: [errorHandlingMixin],
   data() {
     return {
-      bookmarked: false,
+      isBookmarked: this.bookmarked,
     };
+  },
+  methods: {
+    async onStarBtn() {
+      try {
+        if (this.isBookmarked) {
+          await deleteBookmark(this.schedule.scheduleID);
+          this.isBookmarked = false;
+          this.$emit("delete-bookmark", this.schedule.scheduleID);
+        } else {
+          await postBookmark(this.schedule.scheduleID);
+          this.isBookmarked = true;
+        }
+      } catch (err) {
+        this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
+      }
+    },
   },
   computed: {
     formatDate() {

@@ -11,7 +11,10 @@
           :key="schedule.scheduleID"
           class="card-margin"
         >
-          <ScheduleCard :schedule="schedule" />
+          <ScheduleCard
+            :schedule="schedule"
+            :bookmarked="!!schedule.bookmarked"
+          />
         </div>
       </v-col>
       <v-col v-else-if="loading" cols="12" md="8">
