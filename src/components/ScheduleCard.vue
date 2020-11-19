@@ -107,7 +107,7 @@ export default {
     formatDate() {
       return format(
         new Date(this.schedule.datePosted),
-        "LLL. d, yyyy | hh:mm a"
+        "LLL. d, yyyy | h:mm a"
       );
     },
     formatCourses() {

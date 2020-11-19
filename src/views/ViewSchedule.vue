@@ -23,7 +23,7 @@
           </v-btn>
           <v-btn
             color="success"
-            :disabled="!scheduleChange"
+            :disabled="!scheduleChange || timeoutBtn"
             :loading="loading"
             @click="onUpdateBtn"
           >
@@ -57,6 +57,7 @@ export default {
       loading: false,
       schedule: null,
       editable: false,
+      timeoutBtn: false,
     };
   },
   methods: {
@@ -73,10 +74,18 @@ export default {
     },
     async onUpdateBtn() {
       try {
+        this.timeoutBtn = true;
+        this.loading = true;
         await putSchedule(this.schedule.scheduleID, this.schedule);
         this.$emit("open-snackbar", "Schedule successfully updated", "success");
       } catch (err) {
         this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
+      } finally {
+        console.log(this.timeoutBtn);
+        this.loading = false;
+        setTimeout(() => {
+          this.timeoutBtn = false;
+        }, 3000);
       }
     },
   },
