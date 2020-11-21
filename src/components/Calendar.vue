@@ -72,7 +72,9 @@
         >
         </v-calendar>
       </v-sheet>
-      <p class="text-right font-italic mt-4 mb-0">Posted on {{ formatDate }}</p>
+      <p v-if="formatDate" class="text-right font-italic mt-4 mb-0">
+        Posted on {{ formatDate }}
+      </p>
     </v-card-text>
   </v-card>
 </template>
@@ -150,10 +152,13 @@ export default {
       return formatted;
     },
     formatDate() {
-      return format(
-        new Date(this.schedule.datePosted),
-        "LLL. d, yyyy | h:mm a"
-      );
+      if (this.schedule.datePosted) {
+        return format(
+          new Date(this.schedule.datePosted),
+          "LLL. d, yyyy | h:mm a"
+        );
+      }
+      return null;
     },
   },
 };
