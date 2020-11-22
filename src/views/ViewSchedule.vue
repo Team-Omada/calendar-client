@@ -33,16 +33,50 @@
         </div>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="12" lg="6">
+        <div class="text-h5">
+          Comments <v-icon right>mdi-comment-multiple-outline</v-icon>
+        </div>
+        <Loader v-if="!comments" />
+        <p
+          v-else-if="comments && comments.length === 0"
+          class="mt-2 text-h6 font-weight-regular"
+        >
+          No comments yet, be the first!
+        </p>
+        <div v-else v-for="comment in comments" :key="comment.commentID">
+          <CommentCard
+            class="mt-2"
+            :comment="comment"
+            @delete-comment="deleteComment"
+          />
+        </div>
+        <CommentBox
+          class="mt-6"
+          @post-comment="postComment"
+          :loading="commentLoading"
+        />
+      </v-col>
+    </v-row>
   </v-container>
-  <div class="text-center" v-else>
-    <v-progress-circular indeterminate color="primary"></v-progress-circular>
-  </div>
+  <Loader v-else />
 </template>
 
 <script>
 import Calendar from "../components/Calendar";
 import CourseTable from "../components/CourseTable";
-import { getScheduleById, putSchedule, deleteSchedule } from "../API";
+import CommentCard from "../components/CommentCard";
+import CommentBox from "../components/CommentBox";
+import Loader from "../components/Loader";
+import {
+  getScheduleById,
+  putSchedule,
+  deleteSchedule,
+  getComments,
+  postComment,
+  deleteComment,
+} from "../API";
 import { errorHandlingMixin } from "../mixins/errorHandlingMixin";
 import { calendarViewMixin } from "../mixins/calendarViewMixin";
 export default {
@@ -50,17 +84,45 @@ export default {
   components: {
     Calendar,
     CourseTable,
+    CommentCard,
+    CommentBox,
+    Loader,
   },
   mixins: [errorHandlingMixin, calendarViewMixin],
   data() {
     return {
       loading: false,
+      commentLoading: false,
       schedule: null,
+      comments: null,
       editable: false,
       timeoutBtn: false,
     };
   },
   methods: {
+    async postComment(text) {
+      try {
+        this.commentLoading = true;
+        await postComment(this.schedule.scheduleID, { text });
+        const res = await getComments(this.schedule.scheduleID);
+        this.comments = res.data.results;
+      } catch (err) {
+        this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
+      } finally {
+        this.commentLoading = false;
+      }
+    },
+    async deleteComment(commentID) {
+      try {
+        await deleteComment(this.schedule.scheduleID, commentID);
+        this.comments.splice(
+          this.comments.findIndex((comment) => comment.commentID === commentID),
+          1
+        ); // dont need to query database again
+      } catch (err) {
+        this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
+      }
+    },
     async onDeleteBtn() {
       try {
         this.loading = true;
@@ -95,6 +157,8 @@ export default {
       const res = await getScheduleById(scheduleID);
       this.editable = res.data.userID === this.$store.state.user.userID;
       this.schedule = res.data;
+      const resComments = await getComments(scheduleID);
+      this.comments = resComments.data.results;
     } catch (err) {
       this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
       this.$router.push({ path: "/dashboard" });

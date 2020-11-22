@@ -29,6 +29,19 @@ function getAllSchedules() {
   return api().get(`schedules`);
 }
 
+// COMMENTS
+function getComments(scheduleID) {
+  return api().get(`/schedules/${scheduleID}/comments`);
+}
+
+function postComment(scheduleID, data) {
+  return api().post(`/schedules/${scheduleID}/comments`, data);
+}
+
+function deleteComment(scheduleID, commentID) {
+  return api().delete(`schedules/${scheduleID}/comments/${commentID}`);
+}
+
 // BOOKMARKS
 function getUserBookmarks() {
   return api().get(`bookmarks`);
@@ -55,4 +68,7 @@ export {
   getUserBookmarks,
   deleteBookmark,
   postBookmark,
+  getComments,
+  postComment,
+  deleteComment,
 };

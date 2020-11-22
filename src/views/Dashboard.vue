@@ -18,12 +18,7 @@
         </div>
       </v-col>
       <v-col v-else-if="loading" cols="12" md="8">
-        <div class="text-center">
-          <v-progress-circular
-            indeterminate
-            color="primary"
-          ></v-progress-circular>
-        </div>
+        <Loader />
       </v-col>
       <v-col v-else cols="12" md="8">
         <div class="text-h5 text-center">
@@ -44,12 +39,14 @@
 
 <script>
 import ScheduleCard from "../components/ScheduleCard";
+import Loader from "../components/Loader";
 import { getAllSchedules } from "../API";
 import { errorHandlingMixin } from "../mixins/errorHandlingMixin";
 export default {
   name: "Dashboard",
   components: {
     ScheduleCard,
+    Loader,
   },
   mixins: [errorHandlingMixin],
   data() {

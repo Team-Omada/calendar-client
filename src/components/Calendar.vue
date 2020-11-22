@@ -73,7 +73,7 @@
         </v-calendar>
       </v-sheet>
       <p v-if="formatDate" class="text-right font-italic mt-4 mb-0">
-        Posted on {{ formatDate }}
+        Created {{ formatDate }}
       </p>
     </v-card-text>
   </v-card>
