@@ -31,13 +31,8 @@
       </v-col>
     </v-row>
     <v-row v-else-if="loading">
-      <v-col cols="12" md="8">
-        <div class="text-center">
-          <v-progress-circular
-            indeterminate
-            color="primary"
-          ></v-progress-circular>
-        </div>
+      <v-col cols="12">
+        <Loader />
       </v-col>
     </v-row>
     <v-row v-else>
@@ -53,11 +48,13 @@
 
 <script>
 import ScheduleCard from "../components/ScheduleCard";
+import Loader from "../components/Loader";
 import { getUserBookmarks } from "../API";
 export default {
   name: "Bookmarks",
   components: {
     ScheduleCard,
+    Loader,
   },
   data() {
     return {
