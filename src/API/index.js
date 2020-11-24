@@ -42,6 +42,10 @@ function deleteComment(scheduleID, commentID) {
   return api().delete(`schedules/${scheduleID}/comments/${commentID}`);
 }
 
+function putComment(scheduleID, commentID, data) {
+  return api().put(`schedules/${scheduleID}/comments/${commentID}`, data);
+}
+
 // BOOKMARKS
 function getUserBookmarks() {
   return api().get(`bookmarks`);
@@ -71,4 +75,5 @@ export {
   getComments,
   postComment,
   deleteComment,
+  putComment,
 };

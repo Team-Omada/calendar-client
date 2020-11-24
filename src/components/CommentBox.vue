@@ -24,11 +24,9 @@
 <script>
 export default {
   name: "CommentBox",
-  props: {
-    loading: Boolean,
-  },
   data: () => ({
     comment: "",
+    loading: false,
     isValid: false,
     rules: [
       (v) => v.length <= 350 || "Max 350 characters.",
@@ -37,9 +35,14 @@ export default {
   }),
   methods: {
     onPostCommentBtn() {
-      this.$emit("post-comment", this.comment);
-      this.comment = "";
-      this.$refs.form.resetValidation();
+      this.loading = true;
+      this.$emit("post-comment", this.comment, (err) => {
+        if (!err) {
+          this.comment = "";
+        }
+        this.loading = false;
+        this.$refs.form.resetValidation();
+      });
     },
   },
 };

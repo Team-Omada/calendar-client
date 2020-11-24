@@ -49,14 +49,11 @@
           <CommentCard
             class="mt-2"
             :comment="comment"
-            @delete-comment="deleteComment"
+            @delete-comment="removeComment"
+            @edit-comment="editComment"
           />
         </div>
-        <CommentBox
-          class="mt-6"
-          @post-comment="postComment"
-          :loading="commentLoading"
-        />
+        <CommentBox class="mt-6" @post-comment="createComment" />
       </v-col>
     </v-row>
   </v-container>
@@ -76,6 +73,7 @@ import {
   getComments,
   postComment,
   deleteComment,
+  putComment,
 } from "../API";
 import { errorHandlingMixin } from "../mixins/errorHandlingMixin";
 import { calendarViewMixin } from "../mixins/calendarViewMixin";
@@ -92,7 +90,6 @@ export default {
   data() {
     return {
       loading: false,
-      commentLoading: false,
       schedule: null,
       comments: null,
       editable: false,
@@ -100,25 +97,39 @@ export default {
     };
   },
   methods: {
-    async postComment(text) {
+    async editComment(commentID, text, resetForm) {
       try {
-        this.commentLoading = true;
-        await postComment(this.schedule.scheduleID, { text });
-        const res = await getComments(this.schedule.scheduleID);
-        this.comments = res.data.results;
+        await putComment(this.schedule.scheduleID, commentID, { text });
+        this.comments[
+          this.comments.findIndex((comment) => comment.commentID === commentID)
+        ].text = text;
+        this.$emit("open-snackbar", "Comment updated!", "success");
       } catch (err) {
         this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
       } finally {
-        this.commentLoading = false;
+        resetForm();
       }
     },
-    async deleteComment(commentID) {
+    async createComment(text, resetForm) {
+      try {
+        await postComment(this.schedule.scheduleID, { text });
+        this.comments = (
+          await getComments(this.schedule.scheduleID)
+        ).data.results;
+        resetForm();
+      } catch (err) {
+        this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
+        resetForm(err);
+      }
+    },
+    async removeComment(commentID) {
       try {
         await deleteComment(this.schedule.scheduleID, commentID);
         this.comments.splice(
           this.comments.findIndex((comment) => comment.commentID === commentID),
           1
-        ); // dont need to query database again
+        ); // don't need to query again
+        this.$emit("open-snackbar", "Comment deleted!", "success");
       } catch (err) {
         this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
       }
@@ -157,8 +168,7 @@ export default {
       const res = await getScheduleById(scheduleID);
       this.editable = res.data.userID === this.$store.state.user.userID;
       this.schedule = res.data;
-      const resComments = await getComments(scheduleID);
-      this.comments = resComments.data.results;
+      this.comments = (await getComments(scheduleID)).data.results;
     } catch (err) {
       this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
       this.$router.push({ path: "/dashboard" });
