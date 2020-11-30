@@ -25,8 +25,8 @@ function putSchedule(scheduleID, data) {
   return api().put(`schedules/${scheduleID}`, data);
 }
 
-function getAllSchedules() {
-  return api().get(`schedules`);
+function getAllSchedules(params) {
+  return api().get(`schedules`, { params });
 }
 
 // COMMENTS

@@ -154,7 +154,6 @@ export default {
       } catch (err) {
         this.$emit("open-snackbar", this.handleGeneralErr(err), "error");
       } finally {
-        console.log(this.timeoutBtn);
         this.loading = false;
         setTimeout(() => {
           this.timeoutBtn = false;
