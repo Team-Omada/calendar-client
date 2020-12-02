@@ -51,22 +51,20 @@
             />
           </v-col>
         </v-row>
-        <v-row>
-          <div class="d-flex flex-wrap">
-            <v-checkbox
-              class="mr-6"
-              v-for="checkbox in checkboxes"
-              :key="checkbox.label"
-              :label="checkbox.label"
-              v-model="course.days"
-              :value="checkbox.value"
-              multiple
-              dense
-              :error="dayError"
-              @click="dayError = false"
-            ></v-checkbox>
-          </div>
-        </v-row>
+        <div class="d-flex flex-wrap">
+          <v-checkbox
+            class="mr-6"
+            v-for="checkbox in checkboxes"
+            :key="checkbox.label"
+            :label="checkbox.label"
+            v-model="course.days"
+            :value="checkbox.value"
+            multiple
+            dense
+            :error="dayError"
+            @click="dayError = false"
+          ></v-checkbox>
+        </div>
       </v-form>
     </v-card-text>
     <v-card-actions>

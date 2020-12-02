@@ -31,8 +31,8 @@
           <v-icon large>mdi-emoticon-frown-outline</v-icon>
         </div>
       </v-col>
-      <v-col cols="12" md="4">
-        <AdvancedSearch />
+      <v-col cols="12" lg="3" md="4">
+        <AdvancedSearch @apply-filters="setFilters" />
       </v-col>
     </v-row>
   </v-container>
@@ -67,6 +67,20 @@ export default {
       if (this.scheduleList.length === 0) {
         this.message = msg;
       }
+    },
+    setFilters(filters) {
+      for (const [key, val] of Object.entries(filters)) {
+        if (!val) {
+          const { [key]: param, ...rest } = this.search;
+          this.search = rest;
+        } else {
+          this.search = {
+            ...this.search,
+            [key]: val,
+          };
+        }
+      }
+      this.searchSchedules();
     },
     setTerm(term) {
       if (!term) {

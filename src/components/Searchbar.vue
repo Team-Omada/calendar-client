@@ -6,9 +6,10 @@
     clearable
     label="Search..."
     type="search"
-    prepend-inner-icon="mdi-magnify"
+    append-icon="mdi-magnify"
     hint="A course, user, schedule title, term, or instructor."
     @keydown.enter="searchSchedules"
+    @click:append="searchSchedules"
     @click:clear="clearSearch"
   >
   </v-text-field>
@@ -27,7 +28,9 @@ export default {
       this.$emit("search-term", "");
     },
     searchSchedules() {
-      this.$emit("search-term", this.searchTerm);
+      if (this.searchTerm) {
+        this.$emit("search-term", this.searchTerm);
+      }
     },
   },
   mounted() {
