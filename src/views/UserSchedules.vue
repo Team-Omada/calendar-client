@@ -5,13 +5,13 @@
         cols="12"
         md="8"
         class="text-h5"
-        v-if="bookmarkList && bookmarkList.length !== 0"
+        v-if="scheduleList && scheduleList.length !== 0"
       >
-        Your Bookmarks
+        Your Schedules
       </v-col>
     </v-row>
-    <v-row v-if="bookmarkList" justify="center">
-      <v-col v-if="bookmarkList.length === 0" cols="12" md="8">
+    <v-row v-if="scheduleList" justify="center">
+      <v-col v-if="scheduleList.length === 0" cols="12" md="8">
         <div class="text-h5 text-center">
           {{ message }}
         </div>
@@ -20,13 +20,12 @@
         v-else
         cols="12"
         md="8"
-        v-for="bookmark in bookmarkList"
-        :key="bookmark.scheduleID"
+        v-for="schedule in scheduleList"
+        :key="schedule.scheduleID"
       >
         <ScheduleCard
-          :schedule="bookmark"
-          bookmarked
-          @delete-bookmark="onBookmarkDelete"
+          :schedule="schedule"
+          :bookmarked="!!schedule.bookmarked"
         />
       </v-col>
     </v-row>
@@ -49,35 +48,30 @@
 <script>
 import ScheduleCard from "../components/ScheduleCard";
 import Loader from "../components/Loader";
-import { getUserBookmarks } from "../API";
+import { getAllSchedules } from "../API";
 export default {
-  name: "Bookmarks",
+  name: "UserSchedules",
   components: {
     ScheduleCard,
     Loader,
   },
   data() {
     return {
-      bookmarkList: null,
-      message: "You haven't bookmarked any schedules yet!",
+      scheduleList: null,
+      message: "You haven't created any schedules yet!",
       loading: false,
     };
-  },
-  methods: {
-    onBookmarkDelete(id) {
-      this.bookmarkList.splice(
-        this.bookmarkList.findIndex((bookmark) => bookmark.scheduleID === id),
-        1
-      );
-    },
   },
   async mounted() {
     try {
       this.loading = true;
-      const res = await getUserBookmarks();
-      this.bookmarkList = res.data.results;
+      // since there's no exact route for doing this, we just use query params
+      const res = await getAllSchedules({
+        email: this.$store.state.user.email,
+      });
+      this.scheduleList = res.data.results;
     } catch (err) {
-      this.message = "Something went wrong loading bookmarks...";
+      this.message = "Something went wrong loading your schedules...";
     } finally {
       this.loading = false;
     }

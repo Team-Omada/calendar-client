@@ -7,6 +7,7 @@ import Dashboard from "../views/Dashboard.vue";
 import CreateSchedule from "../views/CreateSchedule.vue";
 import ViewSchedule from "../views/ViewSchedule.vue";
 import Bookmarks from "../views/Bookmarks.vue";
+import UserSchedules from "../views/UserSchedules.vue";
 
 Vue.use(VueRouter);
 
@@ -47,6 +48,12 @@ const routes = [
     path: "/bookmarks",
     name: "Bookmarks",
     component: Bookmarks,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/myschedules",
+    name: "UserSchedules",
+    component: UserSchedules,
     meta: { requiresAuth: true },
   },
   {

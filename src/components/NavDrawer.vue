@@ -10,7 +10,6 @@
     <template v-slot:prepend>
       <v-list-item two-line>
         <v-icon large left>mdi-account-circle</v-icon>
-
         <v-list-item-content v-if="isLoggedIn">
           <v-list-item-title>
             {{ $store.state.user.username }}
@@ -57,6 +56,11 @@ export default {
           title: "Create Schedule",
           icon: "mdi-calendar-plus",
           route: "/createschedule",
+        },
+        {
+          title: "My Schedules",
+          icon: "mdi-calendar-account",
+          route: "/myschedules",
         },
         {
           title: "My Bookmarks",
