@@ -22,6 +22,7 @@
       ></v-text-field>
       <div class="d-flex flex-wrap">
         <v-checkbox
+          v-model="filters.days"
           class="mr-4"
           v-for="checkbox in checkboxes"
           :key="checkbox.label"
@@ -59,29 +60,40 @@ export default {
       filters: {
         instructor: "",
         courseID: "",
+        days: [],
       },
     };
   },
   methods: {
     clearAllFilters() {
       for (const key of Object.keys(this.filters)) {
-        this.filters[key] = "";
+        if (Array.isArray(this.filters[key])) {
+          this.filters[key].splice(0);
+        } else {
+          this.filters[key] = "";
+        }
       }
-      this.$emit("apply-filters", this.filters);
+      this.applyFilters();
     },
     clearFilter(property) {
       this.filters[property] = "";
-      this.$emit("apply-filters", this.filters);
+      this.applyFilters();
     },
     applyFilters() {
       this.$emit("apply-filters", this.filters);
     },
   },
   mounted() {
+    // grabs all query params and assigns filters appropriately
     const filterKeys = Object.keys(this.filters);
     for (const [key, val] of Object.entries(this.$route.query)) {
       if (key === filterKeys[filterKeys.indexOf(key)]) {
-        this.filters[key] = val;
+        // if only one day is selected, it is treated as a string, so push it instead
+        if (key === "days" && !Array.isArray(val)) {
+          this.filters[key].push(val);
+        } else {
+          this.filters[key] = val;
+        }
       }
     }
   },

@@ -10,17 +10,15 @@
         <div v-if="scheduleList.length === 0" class="text-h5 text-center">
           {{ message }}
         </div>
-        <div
+
+        <ScheduleCard
+          extraSpaced
           v-else
           v-for="schedule in scheduleList"
           :key="schedule.scheduleID"
-          class="card-margin"
-        >
-          <ScheduleCard
-            :schedule="schedule"
-            :bookmarked="!!schedule.bookmarked"
-          />
-        </div>
+          :schedule="schedule"
+          :bookmarked="!!schedule.bookmarked"
+        />
       </v-col>
       <v-col v-else-if="loading" cols="12" lg="6" md="8">
         <Loader />
@@ -32,7 +30,7 @@
         </div>
       </v-col>
       <v-col cols="12" lg="3" md="4">
-        <AdvancedSearch @apply-filters="setFilters" />
+        <AdvancedSearch @apply-filters="setFilters" :key="$route.fullPath" />
       </v-col>
     </v-row>
   </v-container>
@@ -59,10 +57,41 @@ export default {
       scheduleList: null,
       loading: false,
       message: "",
-      search: {},
+      search: {}, // this object remains empty if no search params are present
+      // therefore, it is not passed as prop to AdvancedSearch or Searchbar
     };
   },
   methods: {
+    async init() {
+      try {
+        this.loading = true;
+        let res, msg;
+        if (this.$route.query) {
+          let params = {};
+          for (const [key, val] of Object.entries(this.$route.query)) {
+            if (key === "days" && !Array.isArray(val)) {
+              params.days = [];
+              params.days.push(val);
+            } else {
+              params[key] = val;
+            }
+          }
+          res = await getAllSchedules(params);
+          this.search = params;
+          msg = "No matching schedules found.";
+        } else {
+          res = await getAllSchedules();
+          msg = "No schedules have been created yet, be the first!";
+        }
+        this.scheduleList = res.data.results;
+        this.setMessageNoResults(msg);
+      } catch (err) {
+        console.log(err);
+        this.message = "Something went wrong loading schedules...";
+      } finally {
+        this.loading = false;
+      }
+    },
     setMessageNoResults(msg) {
       if (this.scheduleList.length === 0) {
         this.message = msg;
@@ -70,7 +99,7 @@ export default {
     },
     setFilters(filters) {
       for (const [key, val] of Object.entries(filters)) {
-        if (!val) {
+        if (!val || (Array.isArray(val) && val.length === 0)) {
           const { [key]: param, ...rest } = this.search;
           this.search = rest;
         } else {
@@ -111,33 +140,16 @@ export default {
       }
     },
   },
-  async mounted() {
-    try {
-      this.loading = true;
-      let res, msg;
-      if (this.$route.query) {
-        res = await getAllSchedules(this.$route.query);
-        msg = "No matching schedules found.";
-      } else {
-        res = await getAllSchedules();
-        msg = "No schedules have been created yet, be the first!";
+  mounted() {
+    this.init();
+  },
+  // without moving a key to the router-view, just init when navigating back from a filter
+  watch: {
+    $route(to, from) {
+      if (Object.keys(from.query).length !== 0 && to.path === "/dashboard") {
+        this.init();
       }
-      this.scheduleList = res.data.results;
-      this.setMessageNoResults(msg);
-    } catch (err) {
-      this.message = "Something went wrong loading schedules...";
-    } finally {
-      this.loading = false;
-    }
+    },
   },
 };
 </script>
-
-<style scoped>
-.card-margin {
-  padding: 12px 0;
-}
-.card-margin:first-child {
-  padding-top: 0;
-}
-</style>

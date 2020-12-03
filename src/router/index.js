@@ -75,7 +75,6 @@ const router = new VueRouter({
  * Check if route should be disabled when logged in and redirect to /dashboard
  * A user shouldn't be able to access /login and /register when logged in!
  */
-// IMPORTANT!!! Uncomment for route protection!!!
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!store.state.isLoggedIn) {
