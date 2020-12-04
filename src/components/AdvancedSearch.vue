@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="0" outlined rounded="rounded-lg">
     <v-card-title>
-      Filter Options
+      Filter by Course
     </v-card-title>
     <v-card-text>
       <v-text-field
@@ -20,6 +20,22 @@
         hint="Ex. CS441"
         @click:append="clearFilter('courseID')"
       ></v-text-field>
+      <p class="mt-4">Between times of:</p>
+      <div class="d-flex">
+        <TimePicker
+          class="pr-1"
+          placeholderTitle="Starts"
+          :existingTime="filters.start"
+          @time-select="(time) => (filters.start = time)"
+        />
+        <TimePicker
+          class="pl-1"
+          placeholderTitle="Ends"
+          :existingTime="filters.end"
+          @time-select="(time) => (filters.end = time)"
+        />
+      </div>
+      <p class="mb-0 mt-2">On day(s):</p>
       <div class="d-flex flex-wrap">
         <v-checkbox
           v-model="filters.days"
@@ -44,8 +60,12 @@
 </template>
 
 <script>
+import TimePicker from "../components/TimePicker";
 export default {
   name: "AdvancedSearch",
+  components: {
+    TimePicker,
+  },
   data() {
     return {
       checkboxes: [
@@ -61,6 +81,8 @@ export default {
         instructor: "",
         courseID: "",
         days: [],
+        start: "",
+        end: "",
       },
     };
   },
@@ -86,6 +108,8 @@ export default {
   mounted() {
     // grabs all query params and assigns filters appropriately
     const filterKeys = Object.keys(this.filters);
+    // if query param structure became complex, it may be best to abandon simple query params
+    // in favor of parsing objects
     for (const [key, val] of Object.entries(this.$route.query)) {
       if (key === filterKeys[filterKeys.indexOf(key)]) {
         // if only one day is selected, it is treated as a string, so push it instead

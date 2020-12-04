@@ -37,6 +37,7 @@
           <v-col cols="12" md="2" sm="3">
             <TimePicker
               placeholderTitle="Start"
+              required
               :error="timeError"
               :existing-time="course.startTime"
               @time-select="setStartTime"
@@ -45,6 +46,7 @@
           <v-col cols="12" md="2" sm="3">
             <TimePicker
               placeholderTitle="End"
+              required
               :error="timeError"
               :existing-time="course.endTime"
               @time-select="setEndTime"

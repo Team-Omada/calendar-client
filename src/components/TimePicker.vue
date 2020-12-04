@@ -8,7 +8,7 @@
           readonly
           v-bind="attrs"
           v-on="on"
-          :rules="[(v) => !!v || 'Select a time.']"
+          :rules="required ? [(v) => !!v || 'Select a time.'] : []"
           :error-messages="errorMsg"
           dense
           outlined
@@ -46,6 +46,7 @@ export default {
       type: String,
       default: "",
     },
+    required: Boolean,
   },
   data() {
     return {
@@ -64,7 +65,7 @@ export default {
   },
   watch: {
     existingTime: {
-      // if there is an existing time (edit course), display it instead of nothing
+      // if there is an existing time (edit course/query string), display it instead of nothing
       immediate: true,
       handler() {
         this.time = this.existingTime;

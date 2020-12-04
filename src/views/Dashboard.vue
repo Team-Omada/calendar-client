@@ -68,6 +68,8 @@ export default {
         let res, msg;
         if (this.$route.query) {
           let params = {};
+          // if query param structure became complex, it may be best to abandon simple query params
+          // in favor of parsing objects
           for (const [key, val] of Object.entries(this.$route.query)) {
             if (key === "days" && !Array.isArray(val)) {
               params.days = [];
