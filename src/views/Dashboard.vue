@@ -16,6 +16,16 @@
           @change="setSingleSearch('semester', semester)"
         ></v-select>
       </v-col>
+      <v-col cols="5" class="hidden-md-and-up">
+        <v-dialog v-model="dialog">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn depressed v-bind="attrs" v-on="on">
+              Filter <v-icon right>mdi-magnify-plus</v-icon>
+            </v-btn>
+          </template>
+          <AdvancedSearch @apply-filters="setFilters" :key="$route.fullPath" />
+        </v-dialog>
+      </v-col>
     </v-row>
     <v-row justify="center">
       <v-col v-if="scheduleList" cols="12" xl="6" md="8">
@@ -41,7 +51,7 @@
           <v-icon large>mdi-emoticon-frown-outline</v-icon>
         </div>
       </v-col>
-      <v-col cols="12" xl="3" md="4">
+      <v-col cols="12" xl="3" md="4" class="hidden-sm-and-down">
         <AdvancedSearch @apply-filters="setFilters" :key="$route.fullPath" />
       </v-col>
     </v-row>
@@ -68,6 +78,7 @@ export default {
     return {
       scheduleList: null,
       loading: false,
+      dialog: false,
       message: "",
       semester: "None",
       search: {}, // this object remains empty if no search params are present
@@ -123,6 +134,7 @@ export default {
         }
       }
       this.searchSchedules();
+      this.dialog = false;
     },
     // comparison has this default value to avoid clutter in template
     setSingleSearch(key, value, comparison = () => this.semester === "None") {
@@ -163,6 +175,9 @@ export default {
       if (Object.keys(from.query).length !== 0 && to.path === "/dashboard") {
         this.init();
       }
+    },
+    "$vuetify.breakpoint.mdAndUp"() {
+      this.dialog = false;
     },
   },
 };
