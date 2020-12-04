@@ -1,12 +1,24 @@
 <template>
   <v-container>
-    <v-row justify="center">
-      <v-col cols="12" lg="6" md="8" class="pb-0">
-        <Searchbar @search-term="setTerm" />
+    <v-row justify-md="center">
+      <v-col cols="12" xl="5" lg="6" md="9" class="pb-0">
+        <Searchbar
+          @search-term="(val) => setSingleSearch('q', val, () => !val)"
+        />
+      </v-col>
+      <v-col cols="7" xl="1" lg="2" md="3" sm="4" class="pb-0">
+        <v-select
+          :items="['None', 'Fall', 'Spring', 'Summer', 'Winter']"
+          label="Term"
+          dense
+          outlined
+          v-model="semester"
+          @change="setSingleSearch('semester', semester)"
+        ></v-select>
       </v-col>
     </v-row>
     <v-row justify="center">
-      <v-col v-if="scheduleList" cols="12" lg="6" md="8">
+      <v-col v-if="scheduleList" cols="12" xl="6" md="8">
         <div v-if="scheduleList.length === 0" class="text-h5 text-center">
           {{ message }}
         </div>
@@ -20,16 +32,16 @@
           :bookmarked="!!schedule.bookmarked"
         />
       </v-col>
-      <v-col v-else-if="loading" cols="12" lg="6" md="8">
+      <v-col v-else-if="loading" cols="12" xl="6" md="8">
         <Loader />
       </v-col>
-      <v-col v-else cols="12" lg="6" md="8">
+      <v-col v-else cols="12" xl="6" md="8">
         <div class="text-h5 text-center">
           {{ message }}
           <v-icon large>mdi-emoticon-frown-outline</v-icon>
         </div>
       </v-col>
-      <v-col cols="12" lg="3" md="4">
+      <v-col cols="12" xl="3" md="4">
         <AdvancedSearch @apply-filters="setFilters" :key="$route.fullPath" />
       </v-col>
     </v-row>
@@ -57,6 +69,7 @@ export default {
       scheduleList: null,
       loading: false,
       message: "",
+      semester: "None",
       search: {}, // this object remains empty if no search params are present
       // therefore, it is not passed as prop to AdvancedSearch or Searchbar
     };
@@ -68,8 +81,6 @@ export default {
         let res, msg;
         if (this.$route.query) {
           let params = {};
-          // if query param structure became complex, it may be best to abandon simple query params
-          // in favor of parsing objects
           for (const [key, val] of Object.entries(this.$route.query)) {
             if (key === "days" && !Array.isArray(val)) {
               params.days = [];
@@ -113,14 +124,15 @@ export default {
       }
       this.searchSchedules();
     },
-    setTerm(term) {
-      if (!term) {
-        const { q, ...rest } = this.search;
+    // comparison has this default value to avoid clutter in template
+    setSingleSearch(key, value, comparison = () => this.semester === "None") {
+      if (comparison()) {
+        const { [key]: param, ...rest } = this.search;
         this.search = rest;
       } else {
         this.search = {
           ...this.search,
-          q: term,
+          [key]: value,
         };
       }
       this.searchSchedules();
