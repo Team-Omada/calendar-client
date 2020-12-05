@@ -8,7 +8,7 @@
     >
       <template v-slot:top>
         <v-card-title>
-          Courses
+          {{ tableTitle }}
           <v-spacer></v-spacer>
           <v-dialog v-if="editable" v-model="courseModal" max-width="900">
             <template v-slot:activator="{ on, attrs }">
@@ -30,7 +30,11 @@
         </v-card-title>
       </template>
       <template v-slot:no-data>
-        Add a course to get started!
+        {{
+          editable
+            ? "Add a course to get started!"
+            : "Select a schedule from the above list to compare!"
+        }}
       </template>
       <template v-if="editable" v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="onEditRow(item.courseID)">
@@ -57,6 +61,10 @@ export default {
     courses: {
       type: Array,
       default: () => [],
+    },
+    tableTitle: {
+      type: String,
+      default: "Courses",
     },
   },
   mixins: [mappedDaysMixin],

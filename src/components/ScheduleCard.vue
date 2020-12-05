@@ -30,7 +30,7 @@
             <v-row>
               <v-col cols="12" sm="7" class="px-0">
                 <v-chip
-                  class="mr-2"
+                  class="mr-2 mt-1"
                   color="success"
                   outlined
                   small
@@ -40,7 +40,9 @@
                 >
               </v-col>
               <v-col cols="12" sm="5" class="px-0">
-                <div class="d-flex justify-end">Posted: {{ formatDate }}</div>
+                <div class="d-flex justify-end mt-1">
+                  Posted: {{ formatDate }}
+                </div>
               </v-col>
             </v-row>
           </v-container>

@@ -68,6 +68,7 @@
           :first-interval="7"
           :interval-minutes="60"
           :interval-count="16"
+          :event-color="getEventColor"
           type="week"
         >
         </v-calendar>
@@ -87,6 +88,7 @@ export default {
   props: {
     schedule: Object,
     editable: Boolean,
+    coursesToCompare: Array,
   },
   mixins: [mappedDaysMixin],
   data() {
@@ -126,16 +128,14 @@ export default {
       }
       this.$emit("semester-change", this.localSchedule.semester);
     },
-  },
-  computed: {
-    parseCourses() {
-      const formatted = [];
+    formatCourses(courses, color) {
+      let formatted = [];
       /**
        * Formats according to Vuetify calendar event standards
        * Needs at least name, start, and end in the object
        * Uses mappedDays to map list of days to associated day in week of this.today
        */
-      this.schedule.courses.forEach((course) => {
+      courses.forEach((course) => {
         course.days.forEach((day) => {
           const formattedDay = day.toLowerCase();
           const start = `2020-11-0${this.mappedDays[formattedDay]} ${course.startTime}`;
@@ -146,10 +146,26 @@ export default {
             end: end,
             courseName: course.courseName,
             instructor: course.instructor,
+            color: color,
           });
         });
       });
       return formatted;
+    },
+    getEventColor(event) {
+      return event.color;
+    },
+  },
+  computed: {
+    parseCourses() {
+      let parsed = [...this.formatCourses(this.schedule.courses, "primary")];
+      if (this.coursesToCompare) {
+        parsed = [
+          ...this.formatCourses(this.coursesToCompare, "success"),
+          ...parsed,
+        ];
+      }
+      return parsed;
     },
     formatDate() {
       if (this.schedule.datePosted) {

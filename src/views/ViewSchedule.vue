@@ -5,12 +5,16 @@
         <Calendar
           :schedule="schedule"
           :editable="editable"
+          :coursesToCompare="coursesToCompare"
           @title-change="titleChange"
           @semester-change="semesterChange"
         />
       </v-col>
       <v-col cols="12" lg="6">
         <CourseTable
+          :tableTitle="
+            editable ? 'Your Courses' : `${schedule.username}'s Courses`
+          "
           :courses="schedule.courses"
           :editable="editable"
           @edit-course="editCourse"
@@ -31,6 +35,16 @@
             <v-icon right>mdi-pencil</v-icon>
           </v-btn>
         </div>
+        <CourseComparison
+          class="mt-6"
+          v-if="!editable"
+          @compare-schedule="compareSchedule"
+        />
+        <CourseTable
+          :courses="coursesToCompare ? coursesToCompare : []"
+          v-if="!editable"
+          tableTitle="Your Courses"
+        />
       </v-col>
     </v-row>
     <v-row>
@@ -66,6 +80,7 @@ import CourseTable from "../components/CourseTable";
 import CommentCard from "../components/CommentCard";
 import CommentBox from "../components/CommentBox";
 import Loader from "../components/Loader";
+import CourseComparison from "../components/CourseComparison";
 import {
   getScheduleById,
   putSchedule,
@@ -85,12 +100,14 @@ export default {
     CommentCard,
     CommentBox,
     Loader,
+    CourseComparison,
   },
   mixins: [errorHandlingMixin, calendarViewMixin],
   data() {
     return {
       loading: false,
       schedule: null,
+      coursesToCompare: null,
       comments: null,
       editable: false,
       timeoutBtn: false,
@@ -158,6 +175,13 @@ export default {
         setTimeout(() => {
           this.timeoutBtn = false;
         }, 3000);
+      }
+    },
+    async compareSchedule(id) {
+      if (id) {
+        this.coursesToCompare = (await getScheduleById(id)).data.courses;
+      } else {
+        this.coursesToCompare = null;
       }
     },
   },
