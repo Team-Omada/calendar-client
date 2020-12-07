@@ -48,7 +48,7 @@
 <script>
 import ScheduleCard from "../components/ScheduleCard";
 import Loader from "../components/Loader";
-import { getAllSchedules } from "../API";
+import { getUserSchedules } from "../API";
 export default {
   name: "UserSchedules",
   components: {
@@ -65,10 +65,7 @@ export default {
   async mounted() {
     try {
       this.loading = true;
-      // since there's no exact route for doing this, we just use query params
-      const res = await getAllSchedules({
-        email: this.$store.state.user.email,
-      });
+      const res = await getUserSchedules(this.$store.state.user.userID);
       this.scheduleList = res.data.results;
     } catch (err) {
       this.message = "Something went wrong loading your schedules...";

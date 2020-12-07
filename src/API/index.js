@@ -8,6 +8,11 @@ function login(data) {
   return api().post("login", data);
 }
 
+// USER API
+function getUserSchedules(userID) {
+  return api().get(`users/${userID}/schedules`);
+}
+
 // SCHEDULE API
 function postSchedule(scheduleObj) {
   return api().post("schedules", scheduleObj);
@@ -64,6 +69,7 @@ function postBookmark(scheduleID) {
 export {
   register,
   login,
+  getUserSchedules,
   postSchedule,
   getScheduleById,
   deleteSchedule,

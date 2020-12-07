@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { getAllSchedules } from "../API";
+import { getUserSchedules } from "../API";
 export default {
   name: "CourseComparison",
   data() {
@@ -68,9 +68,7 @@ export default {
   },
   async mounted() {
     try {
-      const res = await getAllSchedules({
-        email: this.$store.state.user.email,
-      });
+      const res = await getUserSchedules(this.$store.state.user.userID);
       if (res.data.results.length === 0) {
         this.disabled = true;
         this.errorMsg = "Add your own schedule to use this feature!";
