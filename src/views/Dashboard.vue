@@ -195,15 +195,13 @@ export default {
       }
     },
   },
-  mounted() {
-    this.init();
-  },
   // without moving a key to the router-view, just init when navigating back from a filter
   watch: {
-    $route(to, from) {
-      if (Object.keys(from.query).length !== 0 && to.path === "/dashboard") {
+    $route: {
+      immediate: true,
+      handler() {
         this.init();
-      }
+      },
     },
     "$vuetify.breakpoint.mdAndUp"() {
       this.dialog = false;

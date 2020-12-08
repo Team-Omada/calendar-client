@@ -18,43 +18,44 @@ const routes = [
     component: Login,
     meta: {
       disableIfAuth: true,
+      title: "Omada Calendar | Login",
     },
   },
   {
     path: "/register",
     name: "Register",
     component: Register,
-    meta: { disableIfAuth: true },
+    meta: { disableIfAuth: true, title: "Omada Calendar | Register" },
   },
   {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "Omada Calendar | Dashboard" },
   },
   {
     path: "/viewschedule/:scheduleID",
     name: "ViewSchedule",
     component: ViewSchedule,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "Omada Calendar | View Schedule" },
   },
   {
     path: "/createschedule",
     name: "CreateSchedule",
     component: CreateSchedule,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "Omada Calendar | Create Schedule" },
   },
   {
     path: "/bookmarks",
     name: "Bookmarks",
     component: Bookmarks,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "Omada Calendar | My Bookmarks" },
   },
   {
     path: "/myschedules",
     name: "UserSchedules",
     component: UserSchedules,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "Omada Calendar | My Schedules" },
   },
   {
     path: "*",
@@ -76,6 +77,7 @@ const router = new VueRouter({
  * A user shouldn't be able to access /login and /register when logged in!
  */
 router.beforeEach((to, from, next) => {
+  document.title = to.meta.title;
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!store.state.isLoggedIn) {
       next({ name: "Login" });
