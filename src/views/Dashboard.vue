@@ -32,7 +32,6 @@
         <div v-if="scheduleList.length === 0" class="text-h5 text-center">
           {{ message }}
         </div>
-
         <ScheduleCard
           extraSpaced
           v-else
@@ -41,6 +40,19 @@
           :schedule="schedule"
           :bookmarked="!!schedule.bookmarked"
         />
+        <div class="d-flex justify-center">
+          <v-btn
+            text
+            class="mr-2"
+            v-if="prevID"
+            @click="changePage('prev', prevID)"
+          >
+            <v-icon left> mdi-arrow-left-thick</v-icon> Prev
+          </v-btn>
+          <v-btn text v-if="nextID" @click="changePage('next', nextID)">
+            Next <v-icon right>mdi-arrow-right-thick</v-icon>
+          </v-btn>
+        </div>
       </v-col>
       <v-col v-else-if="loading" cols="12" xl="6" md="8">
         <Loader />
@@ -77,6 +89,8 @@ export default {
   data() {
     return {
       scheduleList: null,
+      nextID: null,
+      prevID: null,
       loading: false,
       dialog: false,
       message: "",
@@ -91,6 +105,7 @@ export default {
         this.loading = true;
         let res, msg;
         if (this.$route.query) {
+          this.semester = this.$route.query.semester;
           let params = {};
           for (const [key, val] of Object.entries(this.$route.query)) {
             if (key === "days" && !Array.isArray(val)) {
@@ -107,10 +122,11 @@ export default {
           res = await getAllSchedules();
           msg = "No schedules have been created yet, be the first!";
         }
+        this.nextID = res.data.nextID;
+        this.prevID = res.data.prevID;
         this.scheduleList = res.data.results;
         this.setMessageNoResults(msg);
       } catch (err) {
-        console.log(err);
         this.message = "Something went wrong loading schedules...";
       } finally {
         this.loading = false;
@@ -119,6 +135,20 @@ export default {
     setMessageNoResults(msg) {
       if (this.scheduleList.length === 0) {
         this.message = msg;
+      }
+    },
+    // NOTE: pressing back button will not preserve pagination
+    async changePage(direction, value) {
+      try {
+        const res = await getAllSchedules({
+          ...this.search,
+          [direction]: value,
+        });
+        this.scheduleList = res.data.results;
+        this.nextID = res.data.nextID;
+        this.prevID = res.data.prevID;
+      } catch (err) {
+        this.message = "Something went wrong loading schedules...";
       }
     },
     setFilters(filters) {
@@ -153,6 +183,8 @@ export default {
       try {
         const res = await getAllSchedules(this.search);
         this.scheduleList = res.data.results;
+        this.nextID = res.data.nextID;
+        this.prevID = res.data.prevID;
         this.setMessageNoResults("No matching schedules found.");
         this.$router.push({ query: this.search }).catch((err) => {
           // Ignore the vuex err regarding  navigating to the page they are already on.

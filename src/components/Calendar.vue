@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="0" outlined rounded="rounded-lg">
     <!-- v-card-title causes weird formatting here -->
-    <v-container v-if="!editable" fluid class="px-4 pb-0 pt-3">
+    <v-container v-if="!editable" fluid class="px-4 pb-2 pt-3">
       <v-row>
         <v-col cols="12" lg="8" sm="9" class="pb-0">
           <div class="text-h5">{{ localSchedule.scheduleTitle }}</div>
@@ -18,7 +18,7 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-container v-else fluid class="px-4 pb-0 pt-3">
+    <v-container v-else fluid class="px-4 pb-2 pt-3">
       <v-row>
         <v-col cols="12" lg="8" sm="9" class="py-0">
           <v-text-field
