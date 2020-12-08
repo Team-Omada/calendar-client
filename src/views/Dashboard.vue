@@ -3,6 +3,7 @@
     <v-row justify-md="center">
       <v-col cols="12" xl="5" lg="6" md="9" class="pb-0">
         <Searchbar
+          :key="$route.fullPath"
           @search-term="(val) => setSingleSearch('q', val, () => !val)"
         />
       </v-col>
@@ -181,10 +182,6 @@ export default {
     },
     async searchSchedules() {
       try {
-        const res = await getAllSchedules(this.search);
-        this.scheduleList = res.data.results;
-        this.nextID = res.data.nextID;
-        this.prevID = res.data.prevID;
         this.setMessageNoResults("No matching schedules found.");
         this.$router.push({ query: this.search }).catch((err) => {
           // Ignore the vuex err regarding  navigating to the page they are already on.
