@@ -38,13 +38,5 @@ export default {
       this.searchTerm = this.$route.query.q;
     }
   },
-  watch: {
-    // updates query string when user clears search bar
-    searchTerm() {
-      if (!this.searchTerm) {
-        this.clearSearch();
-      }
-    },
-  },
 };
 </script>
