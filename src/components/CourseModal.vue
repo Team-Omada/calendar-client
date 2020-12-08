@@ -130,7 +130,7 @@ export default {
       },
       // client side rules for validation only runs for client
       rules: {
-        required: (value) => !!value || "Field is required.",
+        required: (value) => !!value.trim() || "Field is required.",
         course: (value) => {
           const pattern = /^[A-Z]{2,4}[0-9]{3}$/;
           return pattern.test(value) || "2-4 letters followed by 3 numbers.";

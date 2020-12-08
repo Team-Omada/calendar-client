@@ -36,12 +36,5 @@ export default {
   mounted() {
     this.searchTerm = this.$route.query.q;
   },
-  watch: {
-    searchTerm() {
-      if (!this.searchTerm) {
-        this.clearSearch();
-      }
-    },
-  },
 };
 </script>

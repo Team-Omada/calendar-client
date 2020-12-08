@@ -24,7 +24,7 @@
           <v-text-field
             v-model="localSchedule.scheduleTitle"
             label="Schedule Title"
-            :rules="[(v) => !!v || 'Field is required.']"
+            :rules="[(v) => !!v.trim() || 'Field is required.']"
             @input="onTitleChange"
           ></v-text-field>
         </v-col>

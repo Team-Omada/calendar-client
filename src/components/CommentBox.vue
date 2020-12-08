@@ -30,7 +30,7 @@ export default {
     isValid: false,
     rules: [
       (v) => v.length <= 350 || "Max 350 characters.",
-      (v) => !!v || "A comment should contain text!",
+      (v) => !!v.trim() || "A comment should contain text!",
     ],
   }),
   methods: {

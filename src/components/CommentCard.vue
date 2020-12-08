@@ -68,7 +68,7 @@ export default {
       editedText: this.comment.text,
       rules: [
         (v) => v.length <= 350 || "Max 350 characters.",
-        (v) => !!v || "A comment should contain text!",
+        (v) => !!v.trim() || "A comment should contain text!",
       ],
       isValid: false,
     };
