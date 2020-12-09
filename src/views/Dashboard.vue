@@ -187,7 +187,7 @@ export default {
           // Ignore the vuex err regarding  navigating to the page they are already on.
           if (err.name != "NavigationDuplicated") {
             // But print any other errors to the console
-            console.error(err);
+            if (process.env.NODE_ENV === "development") console.error(err);
           }
         });
       } catch (err) {

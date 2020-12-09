@@ -153,10 +153,8 @@ export default {
           }
         } else if (err.request) {
           this.serverErrors.emailError = "The request couldn't be sent.";
-          console.log("Request couldn't be sent: ", err);
         } else {
           this.serverErrors.emailError = "Something went wrong...";
-          console.log("Something happened when setting up request: ", err);
         }
       }
       this.loading = false;

@@ -2,12 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import store from "../store";
 import Login from "../views/Login.vue";
-import Register from "../views/Register.vue";
 import Dashboard from "../views/Dashboard.vue";
-import CreateSchedule from "../views/CreateSchedule.vue";
-import ViewSchedule from "../views/ViewSchedule.vue";
-import Bookmarks from "../views/Bookmarks.vue";
-import UserSchedules from "../views/UserSchedules.vue";
 
 Vue.use(VueRouter);
 
@@ -24,7 +19,7 @@ const routes = [
   {
     path: "/register",
     name: "Register",
-    component: Register,
+    component: () => import("../views/Register.vue"),
     meta: { disableIfAuth: true, title: "Omada Calendar | Register" },
   },
   {
@@ -36,25 +31,25 @@ const routes = [
   {
     path: "/viewschedule/:scheduleID",
     name: "ViewSchedule",
-    component: ViewSchedule,
+    component: () => import("../views/ViewSchedule.vue"),
     meta: { requiresAuth: true, title: "Omada Calendar | View Schedule" },
   },
   {
     path: "/createschedule",
     name: "CreateSchedule",
-    component: CreateSchedule,
+    component: () => import("../views/CreateSchedule.vue"),
     meta: { requiresAuth: true, title: "Omada Calendar | Create Schedule" },
   },
   {
     path: "/bookmarks",
     name: "Bookmarks",
-    component: Bookmarks,
+    component: () => import("../views/Bookmarks.vue"),
     meta: { requiresAuth: true, title: "Omada Calendar | My Bookmarks" },
   },
   {
     path: "/myschedules",
     name: "UserSchedules",
-    component: UserSchedules,
+    component: () => import("../views/UserSchedules.vue"),
     meta: { requiresAuth: true, title: "Omada Calendar | My Schedules" },
   },
   {
