@@ -7,7 +7,9 @@ const isProduction = process.env.NODE_ENV === "production";
 // '/' is included at end of base URL, so write API calls accordingly!
 export const api = function() {
   const instance = axios.create({
-    baseURL: isProduction ? process.env.API_URL : "http://localhost:3000/",
+    baseURL: isProduction
+      ? "https://omada-calendar-api.herokuapp.com/"
+      : "http://localhost:3000/",
     headers: {
       Authorization: `Bearer ${store.state.token}`,
     },
